@@ -3,7 +3,7 @@
     "description": "Ansofra is a software Architecture framework that follows the CQRS pattern in PHP, grouping all important products into group, each product being a microservice.",
     "type": "library",
     "license": "MIT",
-    "version": "2.0.9",
+    "version": "2.1.0",
     "authors": [
         {
             "name": "Sam Newdich",
@@ -15,12 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Ansofra\\Bin\\": "bin/",
-            "Ansofra\\App\\": "app/",
-            "Ansofra\\Src\\": "src/",
-            "Ansofra\\Apis\\": "apis/",
-            "Ansofra\\Schema\\": "Schema/",
-            "Ansofra\\Route\\": "route/"
+            "Ansofra\\Bin\\": "bin/"
         }
     },
     "autoload-dev": {

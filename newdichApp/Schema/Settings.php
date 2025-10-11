@@ -2,7 +2,7 @@
 namespace NewdichSchema;
 
 class Settings{
-    public const APP_VERSION ="1.0.0";
+    public const APP_VERSION ="2.1.0";
     public const APP_NAME ="newdich";
     public const APP_TITLE ="";
     public const APP_DESCRIPTION ="";

@@ -20,7 +20,7 @@ foreach ($autoloadFiles as $file) {
 }
 
 if (!$autoloadFound) {
-    fwrite(STDERR, "❌ Autoloader not found.\nPlease run 'composer install' or reinstall Ansofra.\n");
+    fwrite(STDERR, "Autoloader not found.\nPlease run 'composer install' or reinstall Ansofra.\n");
     exit(1);
 }
 
