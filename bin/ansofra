@@ -1,25 +1,32 @@
 #!/usr/bin/env php
 <?php
 
-// Try to find Composer's autoloader
+// ------------------------------------------------------------
+// Load Composer's autoloader (works for local or global installs)
+// ------------------------------------------------------------
 $autoloadFiles = [
-    __DIR__ . '/../vendor/autoload.php',                    // Local install
-    __DIR__ . '/../../../autoload.php',                     // Global install
-    getcwd() . '/vendor/autoload.php',                      // Running from a project
+    __DIR__ . '/../vendor/autoload.php',       // Local install
+    __DIR__ . '/../../../autoload.php',        // Global install
+    getcwd() . '/vendor/autoload.php',         // Running inside a project
 ];
 
+$autoloadFound = false;
 foreach ($autoloadFiles as $file) {
     if (file_exists($file)) {
         require $file;
+        $autoloadFound = true;
         break;
     }
 }
 
-if (!class_exists('Ansofra\\Bin\\Console')) {
-    fwrite(STDERR, "Autoloader not found. Please run 'composer install' or reinstall the package.\n");
+if (!$autoloadFound) {
+    fwrite(STDERR, "❌ Autoloader not found.\nPlease run 'composer install' or reinstall Ansofra.\n");
     exit(1);
 }
 
+// ------------------------------------------------------------
+// Run the Console command handler
+// ------------------------------------------------------------
 use Ansofra\Bin\Console;
 
 $app = new Console();
