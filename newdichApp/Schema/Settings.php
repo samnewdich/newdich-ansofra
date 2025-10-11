@@ -1,0 +1,19 @@
+<?php
+namespace NewdichSchema;
+
+class Settings{
+    public const APP_VERSION ="1.0.0";
+    public const APP_NAME ="newdich";
+    public const APP_TITLE ="";
+    public const APP_DESCRIPTION ="";
+    public const APP_SMTP ="";
+    public const APP_OTP_EMAIL ="";
+    public const APP_OTP_EMAIL_PASSWORD ="";
+    public const APP_SENDING_EMAIL ="";
+    public const APP_SENDING_EMAIL_PASSWORD ="";
+
+    //for annotations
+    public const APP_ANNOTATION_TITLE = self::APP_NAME . " App(Users Area) Endpoints";
+    public const SRC_ANNOTATION_TITLE = self::APP_NAME . " Src(Admins Area) Endpoints";
+}
+?>
