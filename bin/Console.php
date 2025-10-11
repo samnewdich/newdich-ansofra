@@ -3,7 +3,7 @@ namespace Ansofra\Bin;
 
 class Console
 {
-    protected string $version = 'v2.0.6';
+    protected string $version = 'v2.0.7';
 
     public function run(array $argv)
     {
@@ -55,7 +55,7 @@ ________   __
 LOGO;
 
         echo PHP_EOL . $logo . PHP_EOL;
-        echo "Ansofra CQRS Framework " . self::$version . PHP_EOL;
+        echo "Ansofra CQRS Framework " . $this->version . PHP_EOL;
         echo "Author: Newdich Technology" . PHP_EOL . PHP_EOL;
     }
 
