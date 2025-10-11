@@ -3,7 +3,7 @@ namespace Ansofra\Bin;
 
 class Console
 {
-    protected string $version = 'v2.0.7';
+    protected string $version = 'v2.0.8';
 
     public function run(array $argv)
     {
@@ -17,6 +17,10 @@ class Console
 
             case 'new':
                 $this->createNewProject($argv[2] ?? null);
+                break;
+
+            case 'serve':
+                $this->serve();
                 break;
 
             default:
@@ -68,22 +72,44 @@ LOGO;
 
         $target = getcwd() . DIRECTORY_SEPARATOR . $projectName;
         if (file_exists($target)) {
-            echo "❌ Directory '$projectName' already exists.\n";
+            echo "Directory '$projectName' already exists.\n";
             return;
         }
 
-        // 👇 This points to your newdichApp folder
         $skeleton = __DIR__ . '/../newdichApp';
 
         if (!is_dir($skeleton)) {
-            echo "❌ Template folder not found: $skeleton\n";
+            echo "Template folder not found: $skeleton\n";
             return;
         }
 
         $this->copyDirectory($skeleton, $target);
-        echo "✅ Project '$projectName' created successfully!\n";
-        echo "👉 cd $projectName\n";
-        echo "👉 php -S localhost:8000 -t public\n";
+        echo "Congratulations!!, Ansofra has created your project '$projectName' successfully!\n";
+        echo "cd $projectName\n";
+        echo "Newdich-Ansofra server started at http://localhost:8000\n";
+
+        // Automatically start the built-in PHP server
+        chdir($target);
+        $this->serve();
+    }
+
+    protected function serve(): void
+    {
+        $port = 8000;
+        $host = 'localhost';
+        $publicPath = getcwd() . '/public';
+
+        if (!is_dir($publicPath)) {
+            echo "Public directory not found: $publicPath\n";
+            return;
+        }
+
+        echo "Starting Newdich-Ansofra development server on http://{$host}:{$port}\n";
+        echo "Press Ctrl+C to stop the server.\n\n";
+
+        // Use PHP built-in server
+        $cmd = sprintf('php -S %s:%d -t %s', $host, $port, escapeshellarg($publicPath));
+        passthru($cmd);
     }
 
     protected function copyDirectory(string $src, string $dst): void
@@ -110,6 +136,7 @@ LOGO;
         echo "Ansofra CLI\n";
         echo "Usage:\n";
         echo "  ansofra new <project-name>   Create a new Ansofra app\n";
+        echo "  ansofra serve                Start development server at :8000\n";
         echo "  ansofra --version            Show framework version\n";
         echo "  ansofra help                 Show this help message\n";
     }
