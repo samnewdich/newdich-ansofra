@@ -10,7 +10,8 @@
             "NewdichApis":"api/",
             "NewdichRoute":"route/",
             "NewdichSchema":"Schema/",
-            "NewdichSrc":"src/"
+            "NewdichSrc":"src/",
+            "NewdichMail":"Mail/"
         }
     }
 }
