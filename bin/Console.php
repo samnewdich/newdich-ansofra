@@ -3,7 +3,7 @@ namespace Ansofra\Bin;
 
 class Console
 {
-    protected string $version = 'v2.1.1';
+    protected string $version = 'v2.1.2';
 
     public function run(array $argv)
     {
