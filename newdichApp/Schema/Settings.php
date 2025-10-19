@@ -11,9 +11,17 @@ class Settings{
     public const APP_OTP_EMAIL_PASSWORD ="";
     public const APP_SENDING_EMAIL ="";
     public const APP_SENDING_EMAIL_PASSWORD ="";
+    public const AUTH_KEY ="";
 
     //for annotations
     public const APP_ANNOTATION_TITLE = self::APP_NAME . " App(Users Area) Endpoints";
     public const SRC_ANNOTATION_TITLE = self::APP_NAME . " Src(Admins Area) Endpoints";
+
+    //set server configuration
+    public const SERVER ="localhost";
+    public const SERVER_USER ="root";
+    public const SERVER_DB ="user";
+    public const SERVER_PASS ="mysql";
+    public const DOMAIN_NAME ="";
 }
 ?>
