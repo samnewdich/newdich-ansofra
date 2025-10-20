@@ -42,7 +42,6 @@ class NewdichMailer{
     }
 
 
-
     public function send(){
         try{
             $htmlcontent ="Email content in html format here";
