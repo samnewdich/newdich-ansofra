@@ -7,12 +7,17 @@
     },
     "autoload": {
         "psr-4": {
-            "NewdichApp":"app/",
-            "NewdichApis":"api/",
-            "NewdichRoute":"route/",
-            "NewdichSchema":"Schema/",
-            "NewdichSrc":"src/",
-            "NewdichMail":"Mail/"
+            "NewdichApp\\":"app/",
+            "NewdichApis\\":"apis/",
+            "NewdichAuth\\":"Auth/",
+            "NewdichCache\\":"Cache/",
+            "NewdichController\\":"Controller/",
+            "NewdichDto\\":"Dto/",
+            "NewdichMail\\":"Mail/",
+            "NewdichMiddleware\\":"Middleware/",
+            "NewdichRoute\\":"route/",
+            "NewdichSchema\\":"Schema/",
+            "NewdichSrc\\":"src/"
         }
     }
 }
