@@ -12,6 +12,8 @@
             "NewdichAuth\\":"Auth/",
             "NewdichCache\\":"Cache/",
             "NewdichController\\":"Controller/",
+            "NewdichControllerApp\\":"Controller/App/",
+            "NewdichControllerSrc\\":"Controller/Src/",
             "NewdichDto\\":"Dto/",
             "NewdichMail\\":"Mail/",
             "NewdichMiddleware\\":"Middleware/",
