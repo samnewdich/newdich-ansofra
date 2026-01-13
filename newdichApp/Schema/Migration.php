@@ -1,5 +1,9 @@
 <?php
 namespace NewdichSchema;
+// MANUAL INCLUDES (REQUIRED)
+require_once __DIR__ . '/Settings.php';
+require_once __DIR__ . '/Platform.php';
+
 use NewdichSchema\Settings;
 use NewdichSchema\Platform;
 use PDO;
@@ -14,6 +18,31 @@ class Migration{
     private $conn;
     private $conndb;
 
+    public function __construct(array $columns, string $table)
+    {
+        $this->table = $table;
+        $this->columns = $columns;
+
+        $rootDir ="/"; //the root directory of the project
+        //$rootDir can be / and it can be something like /vtu
+        //for example, let's say you have one server/host and you have many project in it.
+        //Example, in your localhost(/var/www/html), let's say you have 3 different projects:
+        //ecommerce, vtu, fintech.
+        //inside your localhost(/var/www/html), you will have
+        // var/www/html/ecommerce
+        // var/www/html/vtu
+        // var/www/html/fintech
+        //so, for ecommerce, the root directory is /ecommerce
+        //for vtu, the root directory is /vtu and for fintech the root directory is /fintech
+        //and if it is only one project you have, and the one project is inside (/var/www/html)
+        // then the root directory will be /
+
+        require $_SERVER["DOCUMENT_ROOT"] . $rootDir."/Schema/Dealer.php";
+        $this->conn = $connnewdich;
+        $this->conndb = $connnewdichdb;
+    }
+
+    /*
     public function __construct(array $data, $table){
         $this->table = $table;
         foreach ($data as $key => $val) {
@@ -21,259 +50,241 @@ class Migration{
             $this->rows[] = $val;
         }
 
-        include($_SERVER["DOCUMENT_ROOT"]."/Schema/Dealer.php");
+        include($_SERVER["DOCUMENT_ROOT"]."/market/Schema/Dealer.php");
         $this->conn = $connnewdich;
         $this->conndb = $connnewdichdb;
-    } 
-
-    public function createDB($dbname){
-        try{
-            $qr ="CREATE DATABASE IF NOT EXISTS $dbname";
-            $this->conndb->exec($qr);
-            echo "Database $dbname successfully created";
-            exit;
-        }
-        catch(Exception $e){
-            echo $e->getMessage();
-            exit;
-        }
     }
+    */
 
-    public function createTB(){
-        try{
-            //this method creates a MySQL Database
-            $usableColumns = implode(',', $this->columns);
-            $usableTable = $this->table;
-            $createQuery = "CREATE TABLE IF NOT EXISTS $usableTable($usableColumns);";
-            $this->conn->exec($createQuery);
-            echo "Table $usableTable was created successfully";
-            exit;
-        }
-        catch(Exception $e){
-            echo $e->getMessage();
-            exit;
-        }
+
+    public function createDB(string $dbname)
+    {
+        $dbname = preg_replace('/[^a-zA-Z0-9_]/', '', $dbname);
+
+        $sql = "CREATE DATABASE IF NOT EXISTS `$dbname`
+                CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+
+        $this->conndb->exec($sql);
+        echo "Database $dbname successfully created";
+        exit;
     }
 
 
 
-    public function saveUnique($uniqueCol, $uniqueData){
-        try{
-            //check if the $uniquedata already exists
+    public function createTB()
+    {
+        $columns = array_filter($this->columns);
+
+        if (empty($columns)) {
+            throw new Exception("No columns supplied");
+        }
+
+        $columnsSQL = implode(",\n", $columns);
+
+        $sql = "
+            CREATE TABLE IF NOT EXISTS `{$this->table}` (
+                $columnsSQL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        ";
+
+        // DEBUG (use once)
+        // echo "<pre>$sql</pre>"; exit;
+
+        $this->conn->exec($sql);
+        echo "Table $usableTable was created successfully";
+        exit;
+    }
+
+
+
+
+
+
+
+    public function saveUnique(string $uniqueCol, $uniqueValue)
+    {
+        try {
             $table = $this->table;
-            $uniqueCol = $this->cleanColumn($uniqueCol);
-            $q = $this->conn->prepare("SELECT $uniqueCol FROM $table WHERE $uniqueCol=:uc");
-            $q->bindParam(':uc', $uniqueCol);
-            $q->execute();
-            if($q->rowCount() < 1){
-                //GET THE COLUMN BINDER
-                $colBinder = [];
-                for($i = 0; $i < count($this->columns); $i++){
-                    $colBinder[] = ":".$this->columns[$i];
+
+            // Check existence
+            $check = $this->conn->prepare(
+                "SELECT 1 FROM `$table` WHERE `$uniqueCol` = :val LIMIT 1"
+            );
+            $check->bindValue(':val', $uniqueValue);
+            $check->execute();
+
+            if ($check->fetchColumn() !== false) {
+                return json_encode([
+                    "status" => "failed",
+                    "response" => "duplicate entry"
+                ], JSON_PRETTY_PRINT);
+            }
+
+            // Build insert
+            $cols = array_keys($this->rows);
+            $placeholders = array_map(fn($c) => ":$c", $cols);
+
+            $sql = "INSERT INTO `$table` (`" . implode('`,`', $cols) . "`)
+                    VALUES (" . implode(',', $placeholders) . ")";
+
+            $stmt = $this->conn->prepare($sql);
+
+            foreach ($this->rows as $col => $val) {
+                $stmt->bindValue(":$col", $val);
+            }
+
+            $stmt->execute();
+
+            return json_encode([
+                "status" => "success",
+                "response" => "saved successfully"
+            ], JSON_PRETTY_PRINT);
+
+        } catch (PDOException $e) {
+            return json_encode([
+                "status" => "failed",
+                "response" => $e->getMessage()
+            ], JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+    public function save()
+    {
+        try {
+            $table = $this->table;
+
+            $cols = array_keys($this->rows);
+            $placeholders = array_map(fn($c) => ":$c", $cols);
+
+            $sql = "INSERT INTO `$table` (`" . implode('`,`', $cols) . "`)
+                    VALUES (" . implode(',', $placeholders) . ")";
+
+            $stmt = $this->conn->prepare($sql);
+
+            foreach ($this->rows as $col => $val) {
+                $stmt->bindValue(":$col", $val);
+            }
+
+            $stmt->execute();
+
+            return json_encode([
+                "status" => "success",
+                "response" => "successfully saved"
+            ], JSON_PRETTY_PRINT);
+
+        } catch (PDOException $e) {
+            return json_encode([
+                "status" => "failed",
+                "response" => $e->getMessage()
+            ], JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+    public function get(array $where = [], int $offset = 0, int $limit = 20)
+    {
+        try {
+            $table = $this->table;
+            $sql = "SELECT * FROM `$table`";
+            $binds = [];
+
+            if (!empty($where)) {
+                $conditions = [];
+                foreach ($where as $col => $val) {
+                    $conditions[] = "`$col` = :$col";
+                    $binds[":$col"] = $val;
                 }
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
 
-                $colBinderToStr = implode(',', $colBinder);
-                $colsToStr = implode(',', $this->columns);
-                $qq = $this->conn->prepare("INSERT INTO $table($colsToStr) VALUES($colBinderToStr)");
-                //loop it
-                for($x = 0; $x < count($colBinder); $x++){
-                    $bindo = $colBinder[$x];
-                    $bindoVal = $this->rows[$x];
-                    $qq->bindParam($bindo, $bindoVal);
-                }
-                //execute
-                $qq->execute();
-                if($qq){
-                    return json_encode(array("status"=>"success", "response"=>"saved successfully"), JSON_PRETTY_PRINT);
-                }
-                else{
-                    return json_encode(array("status"=>"failed", "response"=>"failed to save"), JSON_PRETTY_PRINT);
-                }
+            $sql .= " LIMIT $offset, $limit";
+
+            $stmt = $this->conn->prepare($sql);
+            foreach ($binds as $k => $v) {
+                $stmt->bindValue($k, $v);
             }
-            else{
-                return json_encode(array("status"=>"success", "response"=>"saved successfully"), JSON_PRETTY_PRINT);
-            }
-        }
-        catch(Exception $e){
-            return json_encode(array("status"=>"failed", "response"=>$e->getMessage()), JSON_PRETTY_PRINT);
+
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            return ["error" => $e->getMessage()];
         }
     }
 
 
 
-    public function save(){
-        try{
-            //get columns and rows
-            $colsToStr = implode(',', $this->columns);
-            $rowsToStr = implode(',', $this->rows);
-            //make columns bindable
-            $colsBindable = [];
-            for($i=0; $i < count($this->columns); $i++){
-                $colsBindable[] =":".$this->columns[$i];
-            }
-            //bindable columns to string
-            $colsBindableToStr = implode(',', $colsBindable);
-            //get table
+
+
+
+    public function remove(array $where)
+    {
+        try {
             $table = $this->table;
-            $q = $this->conn->prepare("INSERT INTO $table($colsToStr) VALUES($colsBindableToStr)");
-            for($x=0; $x<count($colsBindable); $x++){
-                $eachColsBindable = $colsBindable[$x];
-                $eachRow = $this->rows[$x];
-                //now bind
-                $q->bindParam($eachColsBindable, $eachRow);
+            $conditions = [];
+            foreach ($where as $col => $val) {
+                $conditions[] = "`$col` = :$col";
             }
-            $q->execute();
-            if($q){
-                return json_encode(array("status"=>"success", "response"=>"successfully saved"), JSON_PRETTY_PRINT);
+
+            $sql = "DELETE FROM `$table` WHERE " . implode(" AND ", $conditions) . " LIMIT 1";
+            $stmt = $this->conn->prepare($sql);
+
+            foreach ($where as $col => $val) {
+                $stmt->bindValue(":$col", $val);
             }
-            else{
-                return json_encode(array("status"=>"failed", "response"=>"failed to save"), JSON_PRETTY_PRINT);
-            }
-        }
-        catch(Exception $e){
-            return json_encode(array("status"=>"failed", "response"=>$e->getMessage()), JSON_PRETTY_PRINT);
-            exit;
+
+            $stmt->execute();
+            return ["status" => "success", "deleted" => $stmt->rowCount()];
+
+        } catch (PDOException $e) {
+            return ["error" => $e->getMessage()];
         }
     }
 
 
 
-    public function get($offset, $limit){
-        try{
+
+    public function edit(array $data, array $where)
+    {
+        try {
             $table = $this->table;
-            $columnsToStr = implode(',', $this->columns);
-            //form bindable columns e.g :cols
-            //form searchable binds e.g cols=:cols
-            $colsBind = [];
-            $colsBindSearch = [];
-            for($i=0; $i<count($this->columns); $i++){
-                $colsBind[] =":".$this->columns[$i];
-                $colsBindSearch[] = $this->columns[$i]."=:".$this->columns[$i];
+
+            $set = [];
+            foreach ($data as $col => $val) {
+                $set[] = "`$col` = :set_$col";
             }
 
-            //convert colsBindSearch array to string
-            $colsBindSearchToStr = implode(',', $colsBindSearch);
+            $conditions = [];
+            foreach ($where as $col => $val) {
+                $conditions[] = "`$col` = :where_$col";
+            }
 
-            $offsetUsed;
-            $limitUsed;
-            if($offset ==='' || $offset ===null || !is_numeric($offset) || !is_numeric($limit) || $limit ==='' || $limit ===null){
-                $offsetUsed = 0;
-                $limitUsed = 1;
+            $sql = "UPDATE `$table` SET " . implode(',', $set)
+                . " WHERE " . implode(' AND ', $conditions)
+                . " LIMIT 1";
+
+            $stmt = $this->conn->prepare($sql);
+
+            foreach ($data as $col => $val) {
+                $stmt->bindValue(":set_$col", $val);
             }
-            
-            $q = $this->conn->prepare("SELECT * FROM $table WHERE $colsBindSearchToStr ORDER BY :offse LIMIT :lim");
-            for($x=0; $x<count($colsBind); $x++){
-                $eachBind = $colsBind[$x];
-                $eachVal = $this->rows[$x];
-                $q->bindParam($eachBind, $eachVal);
+            foreach ($where as $col => $val) {
+                $stmt->bindValue(":where_$col", $val);
             }
-            $q->bindParam(':offse', $offsetUsed);
-            $q->bindParam(':lim', $limitUsed);
-            $q->execute();
-            if($q->rowCount() > 0){
-                $rq = $q->fetchAll(PDO::FETCH_ASSOC);
-                return json_encode(array("status"=>"success", "response"=>$rq), JSON_PRETTY_PRINT);
-            }
-            else{
-                return json_encode(array("status"=>"failed", "response"=>"no data found"), JSON_PRETTY_PRINT);
-            }
-        }
-        catch(Exception $e){
-            return json_encode(array("status"=>"failed", "response"=>$e->getMessage()), JSON_PRETTY_PRINT);
+
+            $stmt->execute();
+            return ["status" => "success", "updated" => $stmt->rowCount()];
+
+        } catch (PDOException $e) {
+            return ["error" => $e->getMessage()];
         }
     }
 
-
-
-
-
-    public function remove(){
-        try{
-            $table = $this->table;
-            $colsBind = [];
-            $colsBindSearch =[];
-            for($i=0; $i<count($this->columns); $i++){
-                $colsBind[] =":".$this->columns[$i];
-                $colsBindSearch[] = $this->columns[$i]."=:".$this->columns[$i];
-            }
-
-            $colsBindSearchToStr = implode(',', $colsBindSearch);
-
-            $q = $this->conn->prepare("DELETE FROM $table WHERE $colsBindSearchToStr");
-            for($x=0; $x<count($colsBindSearch); $x++){
-                $eachBind = $colsBind[$x];
-                $eachVal = $this->rows[$i];
-                $q->bindParam($eachBind, $eachVal);
-            }
-            $q->execute();
-            if($q){
-                return json_encode(array("status"=>"success", "response"=>"deleted successfully"), JSON_PRETTY_PRINT);
-            }
-            else{
-                return json_encode(array("status"=>"failed", "response"=>"failed to delete"), JSON_PRETTY_PRINT);
-            }
-        }
-        catch(Exception $e){
-            return json_encode(array("status"=>"failed", "response"=>$e->getMessage()), JSON_PRETTY_PRINT);
-        }
-    }
-
-
-
-    public function edit(array $uniqueData){
-        try{
-            $uniqueCol = [];
-            $uniqueVal = [];
-            foreach($uniqueData as $col => $val){
-                $uniqueCol[] = $col;
-                $uniqueVal[] = $val;
-            }
-
-            //make unique column bind e.g :col
-            //also make bandsearch r.g col=:col
-            $uniqueColBind = [];
-            $uniqueColBindSearch = [];
-            for($y=0; $y<count($uniqueCol); $y++){
-                $uniqueColBind[] =":".$uniqueCol[$y];
-                $uniqueColBindSearch[] = $uniqueCol[$y]."=:".$uniqueCol[$y];
-            }
-
-            $uniqueColBindSearchStr = implode(',', $uniqueColBindSearch);
-
-
-            $table = $this->table;
-            $colsBind = [];
-            $colsBindSearch = [];
-            for($i=0; $i<count($this->columns); $i++){
-                $colsBind[] =":".$this->columns[$i];
-                $colsBindSearch[] = $this->columns[$i]."=:".$this->columns[$i];
-            }
-
-            $colsBindSearchToStr = implode(',', $colsBindSearch);
-            $q = $this->conn->prepare("UPDATE $table SET $colsBindSearchToStr WHERE $uniqueColBindSearchStr");
-            for($x=0; $x<count($colsBindSearch); $x++){
-                $eachcol = $colsBind[$x];
-                $eachVal = $this->rows[$x];
-                $q->bindParam($eachcol, $eachVal);
-            }
-
-            for($z=0; $z<count($uniqueColBind); $z++){
-                $eachUc = $uniqueColBind[$z];
-                $eachUv = $uniqueVal[$z];
-                $q->bindParam($eachUc, $eachUv);
-            }
-            $q->execute();
-            if($q){
-                return json_encode(array("status"=>"success", "response"=>"edited successfully"), JSON_PRETTY_PRINT);
-            }
-            else{
-                return json_encode(array("status"=>"failed", "response"=>"failed to edit"), JSON_PRETTY_PRINT);
-            }
-        }
-        catch(Exception $e){
-            return json_encode(array("status"=>"failed", "response"=>$e->getMessage()), JSON_PRETTY_PRINT);
-        }
-    }
 
 
 
@@ -286,5 +297,7 @@ class Migration{
             return json_encode(array("status"=>"failed", "response"=>$e->getMessage()), JSON_PRETTY_PRINT);
         }
     }
+
+    
 }
 ?>

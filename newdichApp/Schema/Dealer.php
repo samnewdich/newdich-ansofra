@@ -1,6 +1,11 @@
 <?php
 namespace NewdichSchema;
+// MANUAL INCLUDES (REQUIRED)
+require_once __DIR__ . '/Settings.php';
 use NewdichSchema\Settings;
+use PDO;
+use PDOException;
+
 $ileos = Settings::SERVER;
 $ileone = Settings::SERVER_USER;
 $ilekokoro = Settings::SERVER_PASS;

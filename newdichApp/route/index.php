@@ -17,13 +17,13 @@ $rootDir ="/"; //the root directory of the project
 //for vtu, the root directory is /vtu and for fintech the root directory is /fintech
 //and if it is only one project you have, and the one project is inside (/var/www/html)
 // then the root directory will be /
-$usersArea ="/app"; //the area that users can access
-// let's say your root directory is / . Then the usersArea will be /app
-// if your root directory is /ecommerce, your usersArea will be /ecommerce/app
-// if your root directory is /vtu, your usersArea will be /vtu/app
-$adminArea ="/src"; //the area that only admin can access
-// let's say your root directory is /, your adminArea will be /src
-// if your root directory is /ecommerce, your adminArea will be /ecommerce/src
+$usersArea ="/api"; //the area that users can access
+// let's say your root directory is / . Then the usersArea will be /api
+// if your root directory is /ecommerce, your usersArea will be /ecommerce/api
+// if your root directory is /vtu, your usersArea will be /vtu/api
+$adminArea ="/apiadmin"; //the area that only admin can access
+// let's say your root directory is /, your adminArea will be /apiadmin
+// if your root directory is /ecommerce, your adminArea will be /ecommerce/apiadmin
 $appController = $serverDir.$rootDir."/Controller/App";
 $srcController = $serverDir.$rootDir."/Controller/Src";
 if($url === $rootDir || $url === $rootDir . "/" || $url === $rootDir . "/index.html" || $url === $rootDir . "/index.php"){
@@ -34,9 +34,9 @@ elseif($url === $usersArea || $url === $usersArea . "/"){
     require_once $appController."/AppLanding.php";
     exit();
 }
-elseif($url === $adminArea."/run_first_migration"){
+elseif($url === $adminArea."/run_migration"){
     //Running the first migration will create the admin database with details
-    require_once $srcController."/RunFirstMigration.php";
+    require_once $srcController."/RunMigration.php";
     exit();
 }
 ?>
