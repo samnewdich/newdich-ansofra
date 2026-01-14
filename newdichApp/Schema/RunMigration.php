@@ -16,9 +16,12 @@ $usersTableColumns = Platform::USERS_COLUMNS;
 $adminTable = Platform::ADMINS;
 $adminTableColumns = Platform::ADMINS_COLUMNS;
 
+//NOTE: YOU CAN COMMENT OR REMOVE ANY MIGRATION YOU DON'T NEED
+//YOU CAN ADD ANY MIGRATION YOU WANT.
+
 //Create DB(NB:comment it out if you already created DB)
-//$newMigration = new Migration();
-//echo $newMigration->createDB($dbName);
+$newMigration = new Migration();
+echo $newMigration->createDB($dbName);
 //exit;
 
 //create table(NB:comment it out if you have alredy created the table)
