@@ -18,11 +18,18 @@ class Migration{
     private $conn;
     private $conndb;
 
-    public function __construct(array $columns, string $table)
-    {
-        $this->table = $table;
-        $this->columns = $columns;
 
+    public function __construct(?array $columns = null, ?string $table = null)
+    {
+        // Assign only if provided
+        if ($table !== null) {
+            $this->table = $table;
+        }
+
+        if ($columns !== null) {
+            $this->columns = $columns;
+        }
+        
         $rootDir ="/"; //the root directory of the project
         //$rootDir can be / and it can be something like /vtu
         //for example, let's say you have one server/host and you have many project in it.
@@ -41,20 +48,6 @@ class Migration{
         $this->conn = $connnewdich;
         $this->conndb = $connnewdichdb;
     }
-
-    /*
-    public function __construct(array $data, $table){
-        $this->table = $table;
-        foreach ($data as $key => $val) {
-            $this->columns[] = $this->cleanColumn($key);
-            $this->rows[] = $val;
-        }
-
-        include($_SERVER["DOCUMENT_ROOT"]."/market/Schema/Dealer.php");
-        $this->conn = $connnewdich;
-        $this->conndb = $connnewdichdb;
-    }
-    */
 
 
     public function createDB(string $dbname)
@@ -97,31 +90,73 @@ class Migration{
 
 
 
+    public function getTableColumns(PDO $pdo, string $table): array
+    {
+        //sanitize table name
+        $table = preg_replace('/[^a-zA-Z0-9_]/', '', $table);
+
+        $stmt = $pdo->query("DESCRIBE `$table`");
+
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
 
 
 
-
-    public function saveUnique(string $uniqueCol, $uniqueValue)
+    public function saveUnique(string $uniqueCol, $uniqueValue, array $rowsInKeyValue)
     {
         try {
+            if (empty($rowsInKeyValue)) {
+                return [
+                    "status" => "failed",
+                    "response" => "No data supplied"
+                ];
+            }
+
+            //get table columns
+            $columns = $this->getTableColumns($this->conn, $this->table);
+            //print_r($columns);
+
+            //VALIDATE UNIQUE COLUMN
+            if (!in_array($uniqueCol, $columns, true)) {
+                return [
+                    "status" => "failed",
+                    "response" => "Invalid unique column"
+                ];
+            }
+
+            //FILTER ONLY ALLOWED COLUMNS
+            $data = [];
+            foreach ($rowsInKeyValue as $col => $val) {
+                if (in_array($col, $columns, true)) {
+                    $data[$col] = $val;
+                }
+            }
+
+            if (empty($data)) {
+                return [
+                    "status" => "failed",
+                    "response" => "No valid columns supplied"
+                ];
+            }
+
             $table = $this->table;
 
-            // Check existence
+            //DUPLICATE CHECK
             $check = $this->conn->prepare(
                 "SELECT 1 FROM `$table` WHERE `$uniqueCol` = :val LIMIT 1"
             );
             $check->bindValue(':val', $uniqueValue);
             $check->execute();
 
-            if ($check->fetchColumn() !== false) {
-                return json_encode([
+            if ($check->fetchColumn()) {
+                return [
                     "status" => "failed",
                     "response" => "duplicate entry"
-                ], JSON_PRETTY_PRINT);
+                ];
             }
 
-            // Build insert
-            $cols = array_keys($this->rows);
+            //BUILD INSERT
+            $cols = array_keys($data);
             $placeholders = array_map(fn($c) => ":$c", $cols);
 
             $sql = "INSERT INTO `$table` (`" . implode('`,`', $cols) . "`)
@@ -129,34 +164,64 @@ class Migration{
 
             $stmt = $this->conn->prepare($sql);
 
-            foreach ($this->rows as $col => $val) {
+            foreach ($data as $col => $val) {
                 $stmt->bindValue(":$col", $val);
             }
 
             $stmt->execute();
 
-            return json_encode([
+            return [
                 "status" => "success",
-                "response" => "saved successfully"
-            ], JSON_PRETTY_PRINT);
+                "response" => "saved successfully",
+                "id" => $this->conn->lastInsertId()
+            ];
 
         } catch (PDOException $e) {
-            return json_encode([
+            return [
                 "status" => "failed",
                 "response" => $e->getMessage()
-            ], JSON_PRETTY_PRINT);
+            ];
         }
     }
 
 
 
 
-    public function save()
+
+    public function save(array $rowsInKeyValue)
     {
         try {
+
+            if (empty($rowsInKeyValue)) {
+                return [
+                    "status" => "failed",
+                    "response" => "No data supplied"
+                ];
+            }
+
+            //get table columns
+            $columns = $this->getTableColumns($this->conn, $this->table);
+
+            //FILTER ONLY ALLOWED COLUMNS
+            $data = [];
+            foreach ($rowsInKeyValue as $col => $val) {
+                if (in_array($col, $columns, true)) {
+                    $data[$col] = $val;
+                }
+            }
+
+            if (empty($data)) {
+                return [
+                    "status" => "failed",
+                    "response" => "No valid columns supplied"
+                ];
+            }
+
+
             $table = $this->table;
 
-            $cols = array_keys($this->rows);
+            //BUILD INSERT
+            $cols = array_keys($data);
             $placeholders = array_map(fn($c) => ":$c", $cols);
 
             $sql = "INSERT INTO `$table` (`" . implode('`,`', $cols) . "`)
@@ -164,16 +229,16 @@ class Migration{
 
             $stmt = $this->conn->prepare($sql);
 
-            foreach ($this->rows as $col => $val) {
+            foreach ($data as $col => $val) {
                 $stmt->bindValue(":$col", $val);
             }
 
             $stmt->execute();
 
-            return json_encode([
+            return [
                 "status" => "success",
-                "response" => "successfully saved"
-            ], JSON_PRETTY_PRINT);
+                "response" => "saved successfully"
+            ];
 
         } catch (PDOException $e) {
             return json_encode([
@@ -287,16 +352,6 @@ class Migration{
 
 
 
-
-
-    private function cleanColumn($column){
-        try{
-
-        }
-        catch(Exception $e){
-            return json_encode(array("status"=>"failed", "response"=>$e->getMessage()), JSON_PRETTY_PRINT);
-        }
-    }
 
     
 }

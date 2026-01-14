@@ -17,7 +17,7 @@ $adminTable = Platform::ADMINS;
 $adminTableColumns = Platform::ADMINS_COLUMNS;
 
 //Create DB(NB:comment it out if you already created DB)
-//$newMigration = new Migration($usersTableColumns, $usersTable); //createDB does not need the arguments passed into the constructor, but just not to let constructor empty, we put it there
+//$newMigration = new Migration();
 //echo $newMigration->createDB($dbName);
 //exit;
 

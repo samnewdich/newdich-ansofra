@@ -19,8 +19,8 @@ class Settings{
 
     //set server configuration
     public const SERVER ="localhost";
-    public const SERVER_USER ="market";
-    public const SERVER_DB ="market";
+    public const SERVER_USER ="root";
+    public const SERVER_DB ="mysql";
     public const SERVER_PASS ="mysql";
 
     //other configuration
