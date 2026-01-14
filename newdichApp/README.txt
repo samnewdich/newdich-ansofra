@@ -25,18 +25,13 @@ route
 apis
     This is the directory that contains microservices of API or third parties
     It contains an index.php file which is just a file for prevention
-    It contains a DTO directory for Data Transfer Objects(stored in ApisDTO.php) of these third parties APIs
     It can contain microservices of other third parties APIs(Each microservice has Command, Controller, Query,)
     The namespace is NewdichApis
 
 app
-    The app directory is the backend for users and it contains all the apis microservices of users on this project, 
+    The app directory is the backend for users and it contains all the app microservices of users on this project, 
     it is scannable on Swagger framework(that is it works with swagger)
-    It contains the Auth directory for Authentication and Authorization
-    It contains the Cache directory for In-Memory(RAM) services like Redis or Memchache
     It contains a docs directory which is holds the JSON documentation(newdichapp.json) for Swagger framework
-    It contains a DTO directory for Data Transfer Objects(AnsofraAppDto.php)
-    It contains a Middleware directory, the Middleware has methods that can run on requests/responses
     It contains a swagger directory, the GUI for swagger documentation. This directory has an index.html file that can be loaded on a browser to show/see the API documentation for the whole app/ main directory
     It contains AppSpecification.php which is the file that contains the Info Details of the app/ swagger documentation
     It contains an index.php file, which is just an empty file(do not touch it).
@@ -44,12 +39,9 @@ app
     The namespace is NewdichApp
 
 Mail
-    This is the directory for sending notifications via Emails, SMS, WhatsApp, Telegram, etc..
-    The class NewdichMailer is the class that sends Emails
-    The class NewdichSms is the class that sends SMS
-    The class NewdichWa is the class that sends WhatsApp notifications/messages
-    The class NewdichTg is the class that sends Telegram notifications/messages
+    This is the directory for sending Emails.
     The namespace is NewdichMail
+    it has a file Index.php which is the class that sends the mail
 
 public
     The public folder is the directory for the FrontEnd
@@ -67,21 +59,255 @@ Schema
     Platform.php contains the lists of Database tables and the table Ids
     Settings.php contains the software's configuration like port, ips, names, otp emails, etc..
     The namespace is NewdichSchema
+    Settings.php class :
+        The Settings.php class loads all the configuration of your software.
+        Your can set the configuration in the Settings.php class directly or load it from the .env environment to the Settings.php class
+        The settings of your server, hosting, cloud, etc, is loaded/set in the Settings.php class
+    Dealer.php class :
+        The Dealer.php class connects your software to your server user, host, databases
+        The Dealer.php class uses the configuration in the Settings.php class to make the connection
+    Platform.php class :
+        The Platform.php class contains your Database Tables.
+        If you need to create any table, Add it to the Platform.php class, then load it in the RunMigration.php class and execute the RunMigration.php class
+    Migration.php class :
+        The Migration.php class contains the SQL/Database logic which should only be called.
+        Note: In the Migration.php class, the only thing you should change is the $rootDir variable value. change the value to the root directory of your project.
+        To use the Migration.php class anywhere in your project, use it by adding use NewdichSchema\Migration to the file or class where you want to use it.
+        After adding it to the file or class where you need it, you can then create an object of the Migration class and start calling the methods/functions on the object created.
+        E.G
+        To create new database, use the createDB() method in the Migration.php class
+        Pass the name of the databse to the createDB()
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $dbName = Settings::SERVER_DB;
+            $usersTable = Platform::USERS;
+            $usersTableColumns = Platform::USERS_COLUMNS;
+            $adminTable = Platform::ADMINS;
+            $adminTableColumns = Platform::ADMINS_COLUMNS;
+            
+            $newMigration = new Migration(); //createDB does not need the arguments passed into the constructor
+            echo $newMigration->createDB($dbName);
+        
+        To create new table, use the createTB() method in the Migration.php class
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $dbName = Settings::SERVER_DB;
+            $usersTable = Platform::USERS;
+            $usersTableColumns = Platform::USERS_COLUMNS;
+            $adminTable = Platform::ADMINS;
+            $adminTableColumns = Platform::ADMINS_COLUMNS;
+
+            $newMigration = new Migration($adminTableColumns, $adminTable); //pass the table columns and the table name as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->createTB();
+
+        To insert/create data into table uniquely. That is if you want to insert into table but want to be sure no double entry. for example in the case of creating user accoun. you know one email should not be created more than once!
+        So to insert/create such data uniquely, use the saveUnique() method in the Migration.php class
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            $uniqueColName ="email";
+            $uniqueValue ="useremail@gmail.com";
+            $rowsInKeyValue = [
+                "email"=>"useremail@gmail.com",
+                "fullname"=>"John Doe",
+                "country"=>"Nigeria"
+            ];
+            //Note: the keys of the array must exist as column in the table
+
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->saveUnique($uniqueColName, $uniqueValue, $rowsInKeyValue);
+        
+        To insert/create data into table without uniqueness. That is you don't mind even if there are duplicates. example is saving history or transaction records.
+        To do this, use the save() method in the Migration.php class 
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            $uniqueColName ="email";
+            $uniqueValue ="useremail@gmail.com";
+            $rowsInKeyValue = [
+                "email"=>"useremail@gmail.com",
+                "fullname"=>"John Doe",
+                "country"=>"Nigeria"
+            ];
+            //Note: the keys of the array must exist as column in the table
+
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->save($rowsInKeyValue);
+
+        To select/fetch from table, use the get() method in Migration.php class
+        The 3 arguments which are all OPTIONAL
+        The first argument is the key=>value array of the condition to select
+        The second argument is the offset, at which row should the selection start from.
+        The third argument is the limit, the total number of rows to select/fetch
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            $offset = 0;
+            $limit = 50;
+            $ConditionsInKeyValue = [
+                "email"=>"useremail@gmail.com",
+                "password"=>"123456"
+            ];
+            //Note: the keys of the array must exist as column in the table
+
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->get($ConditionsInKeyValue, $offset, $limit);
+
+            So under the hood, what happens is:
+            SELECT * FROM $adminTable Where email=:email AND password=:password
+            bindParam(':email', 'useremail@gmail.com');
+            bindParam(':password', '123456');
+
+            //note the arguments are all optional, so you can have something like:
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->get();
+
+        To delete row from database table, use the remove() method in Migration.php class
+        It takes one argument which is an array of condition to use in deleting the rows.
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            $offset = 0;
+            $limit = 50;
+            $ConditionsInKeyValue = [
+                "email"=>"useremail@gmail.com",
+                "password"=>"123456"
+            ];
+            //Note: the keys of the array must exist as column in the table
+
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->get($ConditionsInKeyValue);
+            So under the hood, what happens is:
+            DELETE FROM $adminTable Where email=:email AND password=:password
+            bindParam(':email', 'useremail@gmail.com');
+            bindParam(':password', '123456');
+            //note: you must set the conditions for deleting the row.
+
+        To update a row, use the edit() method in the Migration.php class.
+        It takes 2 arguments, which are key=>value array of data to update, and the key=>value array of conditions to use in updating the row
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            $updateDatakeyValue = [
+                "fullname"=>"Samuel Idebi",
+                "country"=>"Nigeria",
+                "profession"=>"Software Engineering"
+            ];
+            //Note: the keys of the array must exist as column in the table
+
+            $ConditionsInKeyValue = [
+                "email"=>"useremail@gmail.com",
+                "password"=>"123456"
+            ];
+            //Note: the keys of the array must exist as column in the table
+
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->edit($updateDatakeyValue, $ConditionsInKeyValue);
+            So under the hood, what happens is:
+            UPDATE $adminTable SET fullname=:fullname, country=:country, profession=:profession Where email=:email AND password=:password
+            bindParam(':fullname', 'Samuel Idebi');
+            bindParam(':country', 'Nigeria');
+            bindParam(':profession', 'Software Engineering');
+            bindParam(':email', 'useremail@gmail.com');
+            bindParam(':password', '123456');
+            //note: you must set both the data array and the conditions array
+
+        To Drop a database Table, use the removeTable() method in Migration.php class
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            if ($newMigration->removeTable()) {
+                echo "Table dropped successfully";
+            } else {
+                echo "Failed to drop table";
+            }
+
+    RunMigration.php class :
+        Once you configure your server in the Settings.php class
+        And you have connected it to server in the Dealer.php class
+        And you have set your tables and their columns in the Platform.php class
+        Make sure you have set $rootDir in the Migration.php class constructor
+        Also set your $rootDir in route/index.php
+        Also set your $usersArea and $adminArea in route/index.php
+        You can then run migration to create all the Database structures
+        To run migration, run this endpoint either on your browser or via an API call
+            localhost/$rootDir/apiadmin/run_migration
+            Where $rootDir is the root directory of your project. e.g / , /ecommerce, etc..
+        IMPORTANT NOTICE, ONLY ADMIN/PERSON WITH RIGHT ACCESS SHOULD BE ALLOWED TO RUN Migration
+        -FOR SECURITY REASON, YOU CAN REMOVE run_migration ROUTE IN THE route/index.php BY JUST REMOVING THIS LINE
+            elseif($url === $adminArea."/run_migration"){
+                //Running the migration will create the admin database with details
+                require_once $srcController."/RunMigration.php";
+                exit();
+            }
+        YOU CAN ALSO REMOVE THIS LINE FROM THE Controller/Src/RunMigration.php
+            namespace NewdichControllerSrc;
+            require_once $serverDir.$rootDir."/Schema/RunMigration.php";
+
+WHAT TO SET/CHANGE 
+    SET $rootDir, $usersArea, $adminArea INSIDE THE route/index.php TO MEET THE CORRECT ROOT DIRECTORY OF YOUR PROJECT
+    SET $rootDir INSIDE THE Schema/Migration.php TO MEET THE CORRECT ROOT DIRECTORY OF YOUR PROJECT
+    CONFIGURE YOUR Schema/Settings.php class
 
 src
     The src/ directory is the backend for admins.
     It can contain all the microservices for admins only
     it is scannable on Swagger framework(that is it works with swagger)
-    It contains the Auth directory for Authentication and Authorization
-    It contains the Cache directory for In-Memory(RAM) services like Redis or Memchache
     It contains a docs directory which is holds the JSON documentation(newdichsrc.json) for Swagger framework
-    It contains a DTO directory for Data Transfer Objects(AnsofraSrcDto.php)
-    It contains a Middleware directory, the Middleware has methods that can run on requests/responses
     It contains a swagger directory, the GUI for swagger documentation. This directory has an index.html file that can be loaded on a browser to show/see the API documentation for the whole app/ main directory
     It contains SrcSpecification.php which is the file that contains the Info Details of the app/ swagger documentation
     It contains an index.php file, which is just an empty file(do not touch it)
     It can contain as many microservices as you want.
     The namespace is NewdichSrc
+
+Auth
+    The Auth/ directory contails the classes the Authenticates and Authorizes both Users and admins
+    It contains AppAuthentication and AppAuthorization for Authenticating and Authorizing Users
+    It contains SrcAuthentication and SrcAuthorization for Authenticating anf Authorizing admins
+
+Controller
+    The Controller/ directory controls the routing of the software
+    It takes request to the appropriate class in the right microservice in either Command or Query
+    It is where Middleware should be run on incoming or outgoing requests
+    It has 2 subdirectories(App and Src) which controls app(users) and src(admins) routing
+    The App/ subdirectory has 2 classes Index.php and AppLanding.php.
+    The Index.php loads the index.html file of the public(which is the landing page)
+    The AppLanding.php loads the swagger UI of the app/(users api)
+    The Src/ subdirectory also has 2 classes Index.php and RunMigration.php
+    The RunMigration.php loads and executes Database Migration.
+
+Cache
+    The Cache/ directory handles caching for those that will be using memory management like Redis, memcache, etc..
+
+Dto
+    The Dto/ directory handles Data Transfer Object. It gets all the incoming data needed for computation
+    Dto is passed through controller to the Classes where it's needed in the microservices in the command or queries
+    It has 3 classes which are AnsofraApiDto.php, AnsofraAppDto.php, AnsofraSrcDto.php
+    The AnsofraApiDto.php handles the incoming data needed in the /apis directory
+    The AnsofraAppDto.php handles the incoming data needed in the /app directory
+    The AnsofraSrcDto.php handles the incoming data needed in the /src directory
+
+Middleware
+    The Middleware/ directory has all functions and methods that could be run on incoming or outgoing requests
+    It has a class Index.php that contains all the functions
 
 vendor
     The vendor/ directory contains all installed PHP libraries usable in your project

@@ -353,6 +353,22 @@ class Migration{
 
 
 
+
+    public function removeTable(): bool
+    {
+        try {
+            $table = preg_replace('/[^a-zA-Z0-9_]/', '', $this->table);
+            $this->conn->exec("DROP TABLE IF EXISTS `$table`");
+            return true;
+        } catch (PDOException $e) {
+            error_log($e->getMessage());
+            return false;
+        }
+    }
+
+
+
+
     
 }
 ?>
