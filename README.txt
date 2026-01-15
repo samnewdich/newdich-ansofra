@@ -267,6 +267,8 @@ Auth
     The Auth/ directory contails the classes the Authenticates and Authorizes both Users and admins
     It contains AppAuthentication and AppAuthorization for Authenticating and Authorizing Users
     It contains SrcAuthentication and SrcAuthorization for Authenticating anf Authorizing admins
+    NOTE: Authentication(wether for App or Src) should be called once the user or admin has been Queried(that is logged in)
+    NOTE: Authorization should be run on any request from user or admin to required endpoints.
 
 Controller
     The Controller/ directory controls the routing of the software
