@@ -225,21 +225,6 @@ Schema
             bindParam(':email', 'useremail@gmail.com');
             bindParam(':password', '123456');
             //note: you must set both the data array and the conditions array
-
-        To Drop a database Table, use the removeTable() method in Migration.php class
-        example
-            use NewdichSchema\Migration;
-            use NewdichSchema\Platform;
-            use NewdichSchema\Settings;
-            $usersTable = Platform::USERS;
-            
-            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
-            if ($newMigration->removeTable()) {
-                echo "Table dropped successfully";
-            } else {
-                echo "Failed to drop table";
-            }
-
     RunMigration.php class :
         Once you configure your server in the Settings.php class
         And you have connected it to server in the Dealer.php class
@@ -282,6 +267,8 @@ Auth
     The Auth/ directory contails the classes the Authenticates and Authorizes both Users and admins
     It contains AppAuthentication and AppAuthorization for Authenticating and Authorizing Users
     It contains SrcAuthentication and SrcAuthorization for Authenticating anf Authorizing admins
+    NOTE: Authentication(wether for App or Src) should be called once the user or admin has been Queried(that is logged in)
+    NOTE: Authorization should be run on any request from user or admin to required endpoints.
 
 Controller
     The Controller/ directory controls the routing of the software
@@ -295,8 +282,53 @@ Controller
     The RunMigration.php loads and executes Database Migration.
 
 Cache
-    The Cache/ directory handles caching for those that will be using memory management like Redis, memcache, etc..
-
+    The Cache/ directory handles caching. It uses Redis for caching
+    It has Setup.php which connects the to your redis server. Do not touch this file
+    Note: make sure you have your redis installed on your server/machine and get the IP, Port, password
+    Note: Open your .env file to update your redis server with the correct Ip, port, password.
+    The Index.php class(Cache/Index.php) has methods you can use for caching and retrieveing:
+    It has the following methods:
+        setCache(): It is a method used to store cache, it takes 2 arguments, the key and the value to store.
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $data ="data to save, it can be a string or an encoded array/object";
+            $key ="mydata";
+            $newobject = new Index();
+            $newobject->setCache($key, $data);
+        setExpireCache(): It is a method used to store cache with expiry time(in seconds), it takes 3 arguments, the key, the value to store and time in seconds.
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $data ="data to save, it can be a string or an encoded array/object";
+            $key ="mydata";
+            $time = 60; //expires in 60 seconds
+            $newobject = new Index();
+            $newobject->setCache($key, $data, $time);
+        setIncrease(): It is a method used to increase store values that are number(integer or float), it takes only 1 argument which is the key of the stored value
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $key ="mynumber";
+            $newobject = new Index();
+            $newobject->setIncrease($key);
+            //Note: you must have used setCache() or setExpireCache() to store the value before. And it must be number(integer or float).
+        setDecrese(): It is a method used to decrease store values that are number(integer or float), it takes only 1 argument which is the key of the stored value
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $key ="mynumber";
+            $newobject = new Index();
+            $newobject->setDecrease($key);
+            //Note: you must have used setCache() or setExpireCache() to store the value before. And it must be number(integer or float).
+        getCache(): It is a method used to retrieve stored values. it takes only 1 argument which is the key of the stored value
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $key ="mynumber";
+            $newobject = new Index();
+            $newobject->getCache($key);
+            //Note: you must have used setCache() or setExpireCache() to store the value before. 
 Dto
     The Dto/ directory handles Data Transfer Object. It gets all the incoming data needed for computation
     Dto is passed through controller to the Classes where it's needed in the microservices in the command or queries
