@@ -18,6 +18,7 @@
   --exclude boostrap.php \
   --exclude .htaccess.php \
   --exclude README.txt \
+  --exclude nodejs \
   src/
 
 
@@ -41,4 +42,5 @@
   --exclude boostrap.php \
   --exclude .htaccess.php \
   --exclude README.txt \
+  --exclude nodejs \
   app/
