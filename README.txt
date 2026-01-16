@@ -42,6 +42,23 @@ Mail
     This is the directory for sending Emails.
     The namespace is NewdichMail
     it has a file Index.php which is the class that sends the mail
+    It has 2 methods which are sendOtp() for sending OTP and sendMail() for sending mail.
+    both the sendOtp() and sendMail() methods take 3 arguments which are :
+    subject, body, recipient
+    example
+        use NewdichMail\Index;
+        $newMail = new Index();
+        //to send otp
+        $subject ="Registration OTP";
+        $body ="Use the OTP 123456 to complete your registration";
+        $recipient ="user1@gmail.com";
+        $sotp = $newMail->sendOtp($subject, $body, $recipient);
+
+        //To send random mail(e.g marketing mail or any notification mail)
+        $subject ="Release of new feature";
+        $body ="Hi dear user, we just released a new feature on our app";
+        $recipient ="activeuser@gmail.com";
+        $smail = $newMail->sendMail($subject, $body, $recipient);
 
 public
     The public folder is the directory for the FrontEnd
