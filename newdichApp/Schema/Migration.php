@@ -84,7 +84,7 @@ class Migration{
         // echo "<pre>$sql</pre>"; exit;
 
         $this->conn->exec($sql);
-        echo "Table $usableTable was created successfully";
+        echo "Table " .$this->table. " was created successfully";
         exit;
     }
 
