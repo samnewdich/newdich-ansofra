@@ -30,7 +30,7 @@ class Migration{
             $this->columns = $columns;
         }
         
-        $rootDir ="/"; //the root directory of the project
+        $rootDir = Settings::ROOT_DIRECTORY; //the root directory of the project
         //$rootDir can be / and it can be something like /vtu
         //for example, let's say you have one server/host and you have many project in it.
         //Example, in your localhost(/var/www/html), let's say you have 3 different projects:
@@ -352,8 +352,6 @@ class Migration{
 
 
 
-
-
     public function removeTable(): bool
     {
         try {
@@ -365,6 +363,7 @@ class Migration{
             return false;
         }
     }
+
 
 
 

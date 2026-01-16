@@ -71,7 +71,6 @@ Schema
         If you need to create any table, Add it to the Platform.php class, then load it in the RunMigration.php class and execute the RunMigration.php class
     Migration.php class :
         The Migration.php class contains the SQL/Database logic which should only be called.
-        Note: In the Migration.php class, the only thing you should change is the $rootDir variable value. change the value to the root directory of your project.
         To use the Migration.php class anywhere in your project, use it by adding use NewdichSchema\Migration to the file or class where you want to use it.
         After adding it to the file or class where you need it, you can then create an object of the Migration class and start calling the methods/functions on the object created.
         E.G
@@ -229,13 +228,11 @@ Schema
         Once you configure your server in the Settings.php class
         And you have connected it to server in the Dealer.php class
         And you have set your tables and their columns in the Platform.php class
-        Make sure you have set $rootDir in the Migration.php class constructor
-        Also set your $rootDir in route/index.php
-        Also set your $usersArea and $adminArea in route/index.php
+        Make sure you have set ROOT_DIRECTORY in the .env file
         You can then run migration to create all the Database structures
         To run migration, run this endpoint either on your browser or via an API call
-            localhost/$rootDir/apiadmin/run_migration
-            Where $rootDir is the root directory of your project. e.g / , /ecommerce, etc..
+            localhost/ROOT_DIRECTORY/apiadmin/run_migration
+            Where ROOT_DIRECTORY is the ROOT_DIRECTORY you set in the .env file. e.g / , /ecommerce, etc..
         IMPORTANT NOTICE, ONLY ADMIN/PERSON WITH RIGHT ACCESS SHOULD BE ALLOWED TO RUN Migration
         -FOR SECURITY REASON, YOU CAN REMOVE run_migration ROUTE IN THE route/index.php BY JUST REMOVING THIS LINE
             elseif($url === $adminArea."/run_migration"){
@@ -248,9 +245,9 @@ Schema
             require_once $serverDir.$rootDir."/Schema/RunMigration.php";
 
 WHAT TO SET/CHANGE 
-    SET $rootDir, $usersArea, $adminArea INSIDE THE route/index.php TO MEET THE CORRECT ROOT DIRECTORY OF YOUR PROJECT
-    SET $rootDir INSIDE THE Schema/Migration.php TO MEET THE CORRECT ROOT DIRECTORY OF YOUR PROJECT
-    CONFIGURE YOUR Schema/Settings.php class
+    SET YOUR .env FILE CORRECTLY.
+    IF YOU ARE IN DEVELOPMENT, USE DEVELOPMENT Data
+    IF YOU ARE IN PRODUCTION, USE PRODUCTION DATA.
 
 src
     The src/ directory is the backend for admins.
@@ -282,8 +279,53 @@ Controller
     The RunMigration.php loads and executes Database Migration.
 
 Cache
-    The Cache/ directory handles caching for those that will be using memory management like Redis, memcache, etc..
-
+    The Cache/ directory handles caching. It uses Redis for caching
+    It has Setup.php which connects the to your redis server. Do not touch this file
+    Note: make sure you have your redis installed on your server/machine and get the IP, Port, password
+    Note: Open your .env file to update your redis server with the correct Ip, port, password.
+    The Index.php class(Cache/Index.php) has methods you can use for caching and retrieveing:
+    It has the following methods:
+        setCache(): It is a method used to store cache, it takes 2 arguments, the key and the value to store.
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $data ="data to save, it can be a string or an encoded array/object";
+            $key ="mydata";
+            $newobject = new Index();
+            $newobject->setCache($key, $data);
+        setExpireCache(): It is a method used to store cache with expiry time(in seconds), it takes 3 arguments, the key, the value to store and time in seconds.
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $data ="data to save, it can be a string or an encoded array/object";
+            $key ="mydata";
+            $time = 60; //expires in 60 seconds
+            $newobject = new Index();
+            $newobject->setCache($key, $data, $time);
+        setIncrease(): It is a method used to increase store values that are number(integer or float), it takes only 1 argument which is the key of the stored value
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $key ="mynumber";
+            $newobject = new Index();
+            $newobject->setIncrease($key);
+            //Note: you must have used setCache() or setExpireCache() to store the value before. And it must be number(integer or float).
+        setDecrese(): It is a method used to decrease store values that are number(integer or float), it takes only 1 argument which is the key of the stored value
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $key ="mynumber";
+            $newobject = new Index();
+            $newobject->setDecrease($key);
+            //Note: you must have used setCache() or setExpireCache() to store the value before. And it must be number(integer or float).
+        getCache(): It is a method used to retrieve stored values. it takes only 1 argument which is the key of the stored value
+            To use, include it in the file where you need it.
+            example
+            use NewdichCache\Index;
+            $key ="mynumber";
+            $newobject = new Index();
+            $newobject->getCache($key);
+            //Note: you must have used setCache() or setExpireCache() to store the value before. 
 Dto
     The Dto/ directory handles Data Transfer Object. It gets all the incoming data needed for computation
     Dto is passed through controller to the Classes where it's needed in the microservices in the command or queries

@@ -1,10 +1,13 @@
 <?php
 namespace NewdichRoute;
+use NewdichSchema\Settings;
+
 $serverDir = $_SERVER["DOCUMENT_ROOT"]; //server directory
 //let apis request go to apis controller
 //let app request go to app controller
 //let src request go to src controler
-$rootDir ="/"; //the root directory of the project
+$rootDir = Settings::ROOT_DIRECTORY; //the root directory of the project
+//set it in the .env file
 //$rootDir can be / and it can be something like /vtu
 //for example, let's say you have one server/host and you have many project in it.
 //Example, in your localhost(/var/www/html), let's say you have 3 different projects:
@@ -17,11 +20,11 @@ $rootDir ="/"; //the root directory of the project
 //for vtu, the root directory is /vtu and for fintech the root directory is /fintech
 //and if it is only one project you have, and the one project is inside (/var/www/html)
 // then the root directory will be /
-$usersArea ="/api"; //the area that users can access
+$usersArea = Settings::ROOT_DIRECTORY ."/api"; //the area that users can access
 // let's say your root directory is / . Then the usersArea will be /api
 // if your root directory is /ecommerce, your usersArea will be /ecommerce/api
 // if your root directory is /vtu, your usersArea will be /vtu/api
-$adminArea ="/apiadmin"; //the area that only admin can access
+$adminArea = Settings::ROOT_DIRECTORY ."/apiadmin"; //the area that only admin can access
 // let's say your root directory is /, your adminArea will be /apiadmin
 // if your root directory is /ecommerce, your adminArea will be /ecommerce/apiadmin
 $appController = $serverDir.$rootDir."/Controller/App";
@@ -35,7 +38,7 @@ elseif($url === $usersArea || $url === $usersArea . "/"){
     exit();
 }
 elseif($url === $adminArea."/run_migration"){
-    //Running the first migration will create the admin database with details
+    //Running the migration will create the admin database with details
     require_once $srcController."/RunMigration.php";
     exit();
 }

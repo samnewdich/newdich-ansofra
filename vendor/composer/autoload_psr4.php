@@ -6,17 +6,12 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
+    'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Polyfill\\Ctype\\' => array($vendorDir . '/symfony/polyfill-ctype'),
-    'Symfony\\Component\\Yaml\\' => array($vendorDir . '/symfony/yaml'),
-    'Symfony\\Component\\Finder\\' => array($vendorDir . '/symfony/finder'),
-    'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
-    'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
-    'OpenApi\\' => array($vendorDir . '/zircote/swagger-php/src'),
+    'PhpOption\\' => array($vendorDir . '/phpoption/phpoption/src/PhpOption'),
+    'GrahamCampbell\\ResultType\\' => array($vendorDir . '/graham-campbell/result-type/src'),
+    'Dotenv\\' => array($vendorDir . '/vlucas/phpdotenv/src'),
     'Ansofra\\Tests\\' => array($baseDir . '/tests'),
-    'Ansofra\\Src\\' => array($baseDir . '/src'),
-    'Ansofra\\Schema\\' => array($baseDir . '/Schema'),
-    'Ansofra\\Route\\' => array($baseDir . '/route'),
     'Ansofra\\Bin\\' => array($baseDir . '/bin'),
-    'Ansofra\\App\\' => array($baseDir . '/app'),
-    'Ansofra\\Apis\\' => array($baseDir . '/apis'),
 );

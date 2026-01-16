@@ -1,0 +1,29 @@
+<?php
+use Dotenv\Dotenv;
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+define('ROOT_DIRECTORY', $_ENV['ROOT_DIRECTORY']);
+define('APP_ENV', $_ENV['APP_ENV']);
+define('APP_VERSION', $_ENV['APP_VERSION']);
+define('APP_NAME', $_ENV['APP_NAME']);
+define('APP_TITLE', $_ENV['APP_TITLE']);
+define('APP_DESCRIPTION', $_ENV['APP_DESCRIPTION']);
+define('APP_SMTP', $_ENV['APP_SMTP']);
+define('APP_PORT', $_ENV['APP_PORT']);
+define('APP_OTP_EMAIL', $_ENV['APP_OTP_EMAIL']);
+define('APP_OTP_EMAIL_PASSWORD', $_ENV['APP_OTP_EMAIL_PASSWORD']);
+define('APP_SENDING_EMAIL', $_ENV['APP_SENDING_EMAIL']);
+define('APP_SENDING_EMAIL_PASSWORD', $_ENV['APP_SENDING_EMAIL_PASSWORD']);
+define('APP_ANNOTATION_TITLE', $_ENV['APP_ANNOTATION_TITLE']);
+define('SRC_ANNOTATION_TITLE', $_ENV['SRC_ANNOTATION_TITLE']);
+define('SERVER', $_ENV['SERVER']);
+define('SERVER_USER', $_ENV['SERVER_USER']);
+define('SERVER_DB', $_ENV['SERVER_DB']);
+define('SERVER_PASS', $_ENV['SERVER_PASS']);
+define('DOMAIN_NAME', $_ENV['DOMAIN_NAME']);
+define('AUTH_KEY', $_ENV['AUTH_KEY']);
+define('REDIS_SERVER_IP', $_ENV['REDIS_SERVER_IP']);
+define('REDIS_SERVER_PORT', $_ENV['REDIS_SERVER_PORT']);
+define('REDIS_AUTH_PASSWORD', $_ENV['REDIS_AUTH_PASSWORD']);
+?>
