@@ -354,6 +354,48 @@ ansofra-generator.sh
     After you have made any changes to your Swagger/OpenApi annotations endponts, you must execute this file by running:
         ./ansofra-generator.sh
 
+.env.example
+    below are what should be in your .env file.
+    in your root directory, create your .env file and add the following to it, don't forget to set the correct value to it.
+    Note: if you are working in development, use development details, if in production, use production details.
+    ROOT_DIRECTORY=The root directory of your project. e.g / , /fintech , /ecommerce , /vtu etc.
+    APP_ENV=The environment you are currently working in.
+    APP_VERSION=The version of your application e.g 2.1.0
+    APP_NAME=The name of your application e.g newdich
+    APP_TITLE=The title of your application
+    APP_DESCRIPTION=Description of your application
+    APP_SMTP=SMTP to use for sending email
+    APP_PORT=port to use for sending email
+    APP_OTP_EMAIL=email address for sending OTP e-mail
+    APP_OTP_EMAIL_PASSWORD=email address for sending OTP password, usually App password(if using google gmail)
+    APP_SENDING_EMAIL=email address for sending mails
+    APP_SENDING_EMAIL_PASSWORD=email address password for sending mails
+
+    #for annotations
+    APP_ANNOTATION_TITLE=Users_Area_Endpoints
+    SRC_ANNOTATION_TITLE=Admins_Area_Endpoints
+
+    #set server configuration
+    SERVER=Your server host e.g localhost or 127.0.0.1
+    SERVER_USER=Your Server username e.g root
+    SERVER_DB=Your Database name e.g myapp
+    SERVER_PASS=Your very strong Server password e.g 1234556
+
+    #other configuration
+    DOMAIN_NAME=Your domain name e.g newdich.tech
+    AUTH_KEY=Your JWT secret token
+
+    #for redis caching
+    REDIS_SERVER_IP=Your Redis server IP e.g 127.0.0.1
+    REDIS_SERVER_PORT=Your Redis server Port e.g 6379
+    REDIS_AUTH_PASSWORD=Your Strong Redis Server Authentication password e.g newdich_ansofra_12345
+
+NOTE: DO NOT KEEP .env FILE IN THE public directory. keep it in a directory that cannot be accessed via web browser.
+NOTE: MAKE SURE THAT IT'S ONLY THE public/ directory that is accessible via web browser.
+
+
+
+
 USING ANSOFRA
 TO USE ANSOFRA, YOU MUST INSTALL IT GLOBALLY ON YOUR DEVICE/MACHINE.
 MAKE SURE YOU ALREADY HAVE composer INSTALLED.
