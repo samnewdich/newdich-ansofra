@@ -20,10 +20,10 @@ class AnsofraSrcDto{
     public $database_name;
 
 
-    public function __construct(array $inData, Index $method){
+    public function __construct(array $inData){
         $allProp = get_object_vars($this);
         foreach($allProp as $k => $v){
-            $this->$k = isset($inData[$k]) ? $method->cleanData($inData[$k]) : '';
+            $this->$k = isset($inData[$k]) ? $inData[$k] : '';
         }
     }
 }
