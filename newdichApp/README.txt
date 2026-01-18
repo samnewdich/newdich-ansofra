@@ -42,6 +42,23 @@ Mail
     This is the directory for sending Emails.
     The namespace is NewdichMail
     it has a file Index.php which is the class that sends the mail
+    It has 2 methods which are sendOtp() for sending OTP and sendMail() for sending mail.
+    both the sendOtp() and sendMail() methods take 3 arguments which are :
+    subject, body, recipient
+    example
+        use NewdichMail\Index;
+        $newMail = new Index();
+        //to send otp
+        $subject ="Registration OTP";
+        $body ="Use the OTP 123456 to complete your registration";
+        $recipient ="user1@gmail.com";
+        $sotp = $newMail->sendOtp($subject, $body, $recipient);
+
+        //To send random mail(e.g marketing mail or any notification mail)
+        $subject ="Release of new feature";
+        $body ="Hi dear user, we just released a new feature on our app";
+        $recipient ="activeuser@gmail.com";
+        $smail = $newMail->sendMail($subject, $body, $recipient);
 
 public
     The public folder is the directory for the FrontEnd
@@ -71,7 +88,6 @@ Schema
         If you need to create any table, Add it to the Platform.php class, then load it in the RunMigration.php class and execute the RunMigration.php class
     Migration.php class :
         The Migration.php class contains the SQL/Database logic which should only be called.
-        Note: In the Migration.php class, the only thing you should change is the $rootDir variable value. change the value to the root directory of your project.
         To use the Migration.php class anywhere in your project, use it by adding use NewdichSchema\Migration to the file or class where you want to use it.
         After adding it to the file or class where you need it, you can then create an object of the Migration class and start calling the methods/functions on the object created.
         E.G
@@ -229,13 +245,11 @@ Schema
         Once you configure your server in the Settings.php class
         And you have connected it to server in the Dealer.php class
         And you have set your tables and their columns in the Platform.php class
-        Make sure you have set $rootDir in the Migration.php class constructor
-        Also set your $rootDir in route/index.php
-        Also set your $usersArea and $adminArea in route/index.php
+        Make sure you have set ROOT_DIRECTORY in the .env file
         You can then run migration to create all the Database structures
         To run migration, run this endpoint either on your browser or via an API call
-            localhost/$rootDir/apiadmin/run_migration
-            Where $rootDir is the root directory of your project. e.g / , /ecommerce, etc..
+            localhost/ROOT_DIRECTORY/apiadmin/run_migration
+            Where ROOT_DIRECTORY is the ROOT_DIRECTORY you set in the .env file. e.g / , /ecommerce, etc..
         IMPORTANT NOTICE, ONLY ADMIN/PERSON WITH RIGHT ACCESS SHOULD BE ALLOWED TO RUN Migration
         -FOR SECURITY REASON, YOU CAN REMOVE run_migration ROUTE IN THE route/index.php BY JUST REMOVING THIS LINE
             elseif($url === $adminArea."/run_migration"){
@@ -248,9 +262,9 @@ Schema
             require_once $serverDir.$rootDir."/Schema/RunMigration.php";
 
 WHAT TO SET/CHANGE 
-    SET $rootDir, $usersArea, $adminArea INSIDE THE route/index.php TO MEET THE CORRECT ROOT DIRECTORY OF YOUR PROJECT
-    SET $rootDir INSIDE THE Schema/Migration.php TO MEET THE CORRECT ROOT DIRECTORY OF YOUR PROJECT
-    CONFIGURE YOUR Schema/Settings.php class
+    SET YOUR .env FILE CORRECTLY.
+    IF YOU ARE IN DEVELOPMENT, USE DEVELOPMENT Data
+    IF YOU ARE IN PRODUCTION, USE PRODUCTION DATA.
 
 src
     The src/ directory is the backend for admins.
@@ -284,6 +298,14 @@ Controller
 Cache
     The Cache/ directory handles caching. It uses Redis for caching
     It has Setup.php which connects the to your redis server. Do not touch this file
+    It has RateLimit.php class that can be used for Rate limiting. It works with Redis, hence you must have your Redis server set up.
+    The RateLimit.php class takes 3 arguments into its constructor which are: limit, window(in seconds), 1p
+    Then you now call the process() function on it.
+    example:
+        use NewdichCache\RateLimit
+        $newRateLimit = new RateLimit($limit, $window, $ip);
+        $newRateLimit->process();
+        //Note: $limit is the number of request per given period, $window is the duration of timeframe(in seconds), $ip is the IP address of the user.
     Note: make sure you have your redis installed on your server/machine and get the IP, Port, password
     Note: Open your .env file to update your redis server with the correct Ip, port, password.
     The Index.php class(Cache/Index.php) has methods you can use for caching and retrieveing:
@@ -356,6 +378,48 @@ ansofra-generator.sh
     This is a shell file that generates the swagger annotation JSON documentation into the docs/ directory of /app and /src respectively.
     After you have made any changes to your Swagger/OpenApi annotations endponts, you must execute this file by running:
         ./ansofra-generator.sh
+
+.env.example
+    below are what should be in your .env file.
+    in your root directory, create your .env file and add the following to it, don't forget to set the correct value to it.
+    Note: if you are working in development, use development details, if in production, use production details.
+    ROOT_DIRECTORY=The root directory of your project. e.g / , /fintech , /ecommerce , /vtu etc.
+    APP_ENV=The environment you are currently working in.
+    APP_VERSION=The version of your application e.g 2.1.0
+    APP_NAME=The name of your application e.g newdich
+    APP_TITLE=The title of your application
+    APP_DESCRIPTION=Description of your application
+    APP_SMTP=SMTP to use for sending email
+    APP_PORT=port to use for sending email
+    APP_OTP_EMAIL=email address for sending OTP e-mail
+    APP_OTP_EMAIL_PASSWORD=email address for sending OTP password, usually App password(if using google gmail)
+    APP_SENDING_EMAIL=email address for sending mails
+    APP_SENDING_EMAIL_PASSWORD=email address password for sending mails
+
+    #for annotations
+    APP_ANNOTATION_TITLE=Users_Area_Endpoints
+    SRC_ANNOTATION_TITLE=Admins_Area_Endpoints
+
+    #set server configuration
+    SERVER=Your server host e.g localhost or 127.0.0.1
+    SERVER_USER=Your Server username e.g root
+    SERVER_DB=Your Database name e.g myapp
+    SERVER_PASS=Your very strong Server password e.g 1234556
+
+    #other configuration
+    DOMAIN_NAME=Your domain name e.g newdich.tech
+    AUTH_KEY=Your JWT secret token
+
+    #for redis caching
+    REDIS_SERVER_IP=Your Redis server IP e.g 127.0.0.1
+    REDIS_SERVER_PORT=Your Redis server Port e.g 6379
+    REDIS_AUTH_PASSWORD=Your Strong Redis Server Authentication password e.g newdich_ansofra_12345
+
+NOTE: DO NOT KEEP .env FILE IN THE public directory. keep it in a directory that cannot be accessed via web browser.
+NOTE: MAKE SURE THAT IT'S ONLY THE public/ directory that is accessible via web browser.
+
+
+
 
 USING ANSOFRA
 TO USE ANSOFRA, YOU MUST INSTALL IT GLOBALLY ON YOUR DEVICE/MACHINE.

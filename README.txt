@@ -298,6 +298,14 @@ Controller
 Cache
     The Cache/ directory handles caching. It uses Redis for caching
     It has Setup.php which connects the to your redis server. Do not touch this file
+    It has RateLimit.php class that can be used for Rate limiting. It works with Redis, hence you must have your Redis server set up.
+    The RateLimit.php class takes 3 arguments into its constructor which are: limit, window(in seconds), 1p
+    Then you now call the process() function on it.
+    example:
+        use NewdichCache\RateLimit
+        $newRateLimit = new RateLimit($limit, $window, $ip);
+        $newRateLimit->process();
+        //Note: $limit is the number of request per given period, $window is the duration of timeframe(in seconds), $ip is the IP address of the user.
     Note: make sure you have your redis installed on your server/machine and get the IP, Port, password
     Note: Open your .env file to update your redis server with the correct Ip, port, password.
     The Index.php class(Cache/Index.php) has methods you can use for caching and retrieveing:
