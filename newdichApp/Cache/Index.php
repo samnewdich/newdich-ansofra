@@ -32,6 +32,7 @@ class Index{
 
     public function setIncrease($key){
         try{
+            $this->conRedis()->incr($key);
             $arrayOut = array(
                 "message"=>"successfully increased",
                 "value"=> $this->conRedis()->get($key)

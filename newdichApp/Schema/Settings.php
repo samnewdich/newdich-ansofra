@@ -32,5 +32,10 @@ class Settings{
     public const REDIS_SERVER_IP = REDIS_SERVER_IP;
     public const REDIS_SERVER_PORT = REDIS_SERVER_PORT;
     public const REDIS_AUTH_PASSWORD = REDIS_AUTH_PASSWORD;
+
+    //You can then put your table here
+    //Examples
+    public const USERS_TABLE ="users";
+    public const ADMIN_TABLE ="admins";
 }
 ?>
