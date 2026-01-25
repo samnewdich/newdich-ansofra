@@ -59,6 +59,17 @@ Mail
         $body ="Hi dear user, we just released a new feature on our app";
         $recipient ="activeuser@gmail.com";
         $smail = $newMail->sendMail($subject, $body, $recipient);
+    
+    To send email via sendgrid, use the Mail/Sendgrid.php class. It has a send() function
+    The send() function takes 4 arguments which are:
+        recipient Email
+        recipient name
+        Email subject
+        Email content
+        example
+            use NewdichMail\Sendgrid;
+            $newSendgrid = new Sendgrid();
+            $newSendgrid->send($recipient_email, $recipient_name, $subject, $content);
 
 public
     The public folder is the directory for the FrontEnd
@@ -358,6 +369,12 @@ Dto
     The AnsofraApiDto.php handles the incoming data needed in the /apis directory
     The AnsofraAppDto.php handles the incoming data needed in the /app directory
     The AnsofraSrcDto.php handles the incoming data needed in the /src directory
+
+Files 
+    The Files/ directory handles file(s) processing, such as file(s) uploading, file(s) downloading and more.
+    To use it, the namespace is NewdichFiles.
+    To upload file(s), you can check the Files/Upload.php class
+    To download file(s), you can check the Files/Download.php class
 
 Middleware
     The Middleware/ directory has all functions and methods that could be run on incoming or outgoing requests

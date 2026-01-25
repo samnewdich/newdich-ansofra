@@ -19,7 +19,8 @@
             "NewdichMiddleware\\":"Middleware/",
             "NewdichRoute\\":"route/",
             "NewdichSchema\\":"Schema/",
-            "NewdichSrc\\":"src/"
+            "NewdichSrc\\":"src/",
+            "NewdichFiles\\":"Files"
         }
     }
 }

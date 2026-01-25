@@ -13,6 +13,11 @@ class Settings{
     public const APP_OTP_EMAIL_PASSWORD = APP_OTP_EMAIL_PASSWORD;
     public const APP_SENDING_EMAIL = APP_SENDING_EMAIL;
     public const APP_SENDING_EMAIL_PASSWORD = APP_SENDING_EMAIL_PASSWORD;
+    
+    //FOR MAILING VIA SENDGRID
+    public const SENDGRID_API_KEY = SENDGRID_API_KEY;
+    public const SENDGRID_CUSTOMIZED_DOMAIN_EMAIL = SENDGRID_CUSTOMIZED_DOMAIN_EMAIL;
+    public const SENDGRID_MAILING_ENDPOINT = SENDGRID_MAILING_ENDPOINT;
 
     //for annotations
     public const APP_ANNOTATION_TITLE = APP_ANNOTATION_TITLE;
@@ -32,6 +37,9 @@ class Settings{
     public const REDIS_SERVER_IP = REDIS_SERVER_IP;
     public const REDIS_SERVER_PORT = REDIS_SERVER_PORT;
     public const REDIS_AUTH_PASSWORD = REDIS_AUTH_PASSWORD;
+
+    //for file and uploading
+    public const UPLOAD_DIRECTIORY = UPLOAD_DIRECTIORY;
 
     //You can then put your table here
     //Examples
