@@ -106,10 +106,10 @@ class Migration{
     {
         try {
             if (empty($rowsInKeyValue)) {
-                return [
+                return json_encode([
                     "status" => "failed",
                     "response" => "No data supplied"
-                ];
+                ], JSON_PRETTY_PRINT);
             }
 
             //get table columns
@@ -118,10 +118,10 @@ class Migration{
 
             //VALIDATE UNIQUE COLUMN
             if (!in_array($uniqueCol, $columns, true)) {
-                return [
+                return json_encode([
                     "status" => "failed",
                     "response" => "Invalid unique column"
-                ];
+                ], JSON_PRETTY_PRINT);
             }
 
             //FILTER ONLY ALLOWED COLUMNS
@@ -133,10 +133,10 @@ class Migration{
             }
 
             if (empty($data)) {
-                return [
+                return json_encode([
                     "status" => "failed",
                     "response" => "No valid columns supplied"
-                ];
+                ], JSON_PRETTY_PRINT);
             }
 
             $table = $this->table;
@@ -149,10 +149,10 @@ class Migration{
             $check->execute();
 
             if ($check->fetchColumn()) {
-                return [
+                return json_encode([
                     "status" => "failed",
                     "response" => "duplicate entry"
-                ];
+                ], JSON_PRETTY_PRINT);
             }
 
             //BUILD INSERT
@@ -170,17 +170,17 @@ class Migration{
 
             $stmt->execute();
 
-            return [
+            return json_encode([
                 "status" => "success",
                 "response" => "saved successfully",
                 "id" => $this->conn->lastInsertId()
-            ];
+            ], JSON_PRETTY_PRINT);
 
         } catch (PDOException $e) {
-            return [
+            return json_encode([
                 "status" => "failed",
                 "response" => $e->getMessage()
-            ];
+            ], JSON_PRETTY_PRINT);
         }
     }
 
@@ -193,10 +193,10 @@ class Migration{
         try {
 
             if (empty($rowsInKeyValue)) {
-                return [
+                return json_encode([
                     "status" => "failed",
                     "response" => "No data supplied"
-                ];
+                ], JSON_PRETTY_PRINT);
             }
 
             //get table columns
@@ -211,10 +211,10 @@ class Migration{
             }
 
             if (empty($data)) {
-                return [
+                return json_encode([
                     "status" => "failed",
                     "response" => "No valid columns supplied"
-                ];
+                ], JSON_PRETTY_PRINT);
             }
 
 
@@ -235,10 +235,10 @@ class Migration{
 
             $stmt->execute();
 
-            return [
+            return json_encode([
                 "status" => "success",
                 "response" => "saved successfully"
-            ];
+            ], JSON_PRETTY_PRINT);
 
         } catch (PDOException $e) {
             return json_encode([
@@ -255,7 +255,7 @@ class Migration{
     {
         try {
             $table = $this->table;
-            $sql = "SELECT * FROM `$table`";
+            $sql   = "SELECT * FROM `$table`";
             $binds = [];
 
             if (!empty($where)) {
@@ -267,20 +267,42 @@ class Migration{
                 $sql .= " WHERE " . implode(" AND ", $conditions);
             }
 
-            $sql .= " LIMIT $offset, $limit";
+            // Ensure integers for LIMIT
+            $offset = (int) $offset;
+            $limit  = (int) $limit;
+
+            $sql .= " ORDER BY `{$table}_id` DESC LIMIT $offset, $limit";
 
             $stmt = $this->conn->prepare($sql);
-            foreach ($binds as $k => $v) {
-                $stmt->bindValue($k, $v);
+
+            foreach ($binds as $key => $value) {
+                $stmt->bindValue($key, $value);
             }
 
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (!empty($rows)) {
+                return json_encode([
+                    "status"   => "success",
+                    "response" => $rows
+                ], JSON_PRETTY_PRINT);
+            }
+
+            return json_encode([
+                "status"   => "failed",
+                "response" => "No record found"
+            ], JSON_PRETTY_PRINT);
 
         } catch (PDOException $e) {
-            return ["error" => $e->getMessage()];
+            return json_encode([
+                "status"   => "failed",
+                "response" => $e->getMessage()
+            ], JSON_PRETTY_PRINT);
         }
     }
+
 
 
 
@@ -304,10 +326,10 @@ class Migration{
             }
 
             $stmt->execute();
-            return ["status" => "success", "deleted" => $stmt->rowCount()];
+            return json_encode(["status" => "success", "response" =>"successfully deleted row ".$stmt->rowCount()], JSON_PRETTY_PRINT);
 
         } catch (PDOException $e) {
-            return ["error" => $e->getMessage()];
+            return json_encode(["status"=>"failed", "response" => $e->getMessage()], JSON_PRETTY_PRINT);
         }
     }
 
@@ -343,10 +365,10 @@ class Migration{
             }
 
             $stmt->execute();
-            return ["status" => "success", "updated" => $stmt->rowCount()];
+            return json_encode(["status" => "success", "response" => $stmt->rowCount()], JSON_PRETTY_PRINT);
 
         } catch (PDOException $e) {
-            return ["error" => $e->getMessage()];
+            return json_encode(["status"=>"failed", "response" => $e->getMessage()], JSON_PRETTY_PRINT);
         }
     }
 
