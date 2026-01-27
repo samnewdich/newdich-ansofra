@@ -19,14 +19,67 @@ class Upload{
         $uploadDir = $this->uploadDir;
         $maxFiles  = 20;
         $allowedTypes = [
+            //Images
             'image/jpeg',
             'image/png',
             'image/webp',
             'image/gif',
+            'image/svg+xml',
+            'image/bmp',
+            'image/tiff',
+
+            //Videos
             'video/mp4',
             'video/webm',
-            'video/ogg'
+            'video/ogg',
+            'video/avi',
+            'video/mpeg',
+            'video/quicktime', // .mov
+            'video/x-msvideo',
+
+            //Audio
+            'audio/mpeg',      // mp3
+            'audio/wav',
+            'audio/ogg',
+            'audio/webm',
+            'audio/aac',
+            'audio/mp4',
+
+            //Documents
+            'application/pdf',
+            'application/msword', // .doc
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+            'application/vnd.ms-excel', // .xls
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+            'application/vnd.ms-powerpoint', // .ppt
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
+            'text/plain', // .txt
+            'text/csv',
+            'text/markdown',
+
+            //Archives (VERY important for software)
+            'application/zip',
+            'application/x-zip-compressed',
+            'application/x-rar-compressed',
+            'application/x-7z-compressed',
+            'application/gzip',
+            'application/x-tar',
+
+            //Code / Dev files
+            'application/json',
+            'application/xml',
+            'text/html',
+            'text/css',
+            'application/javascript',
+            'text/javascript',
+
+            //Executables / Installers (USE WITH CAUTION)
+            'application/octet-stream',
+            'application/x-msdownload', // .exe
+            'application/x-ms-installer', // .msi
+            'application/vnd.apple.installer+xml', // .pkg
         ];
+
 
 
         // Validate input
