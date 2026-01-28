@@ -42,3 +42,4 @@ class Mailgun
         return json_encode(["status"=>"success", "response"=>"Email delivered"], JSON_PRETTY_PRINT);
     }
 }
+?>

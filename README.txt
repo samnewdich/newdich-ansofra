@@ -70,6 +70,7 @@ Mail
             use NewdichMail\Sendgrid;
             $newSendgrid = new Sendgrid();
             $newSendgrid->send($recipient_email, $recipient_name, $subject, $content);
+        Note: Don't forget to set all your .env environment
     
     To send email via mailgun, use Mail/Mailgun.php class, it has send() function 
     The send() function takes 4 arguments which are:
@@ -81,6 +82,7 @@ Mail
             use NewdichMail\Mailgun;
             $newMailgun = new Mailgun();
             $newMailgun->send($recipient_email, $recipient_name, $subject, $content);
+        Note: Don't forget to set all your .env environment
 
 public
     The public folder is the directory for the FrontEnd
