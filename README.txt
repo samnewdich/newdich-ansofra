@@ -84,6 +84,18 @@ Mail
             $newMailgun->send($recipient_email, $recipient_name, $subject, $content);
         Note: Don't forget to set all your .env environment
 
+    To send email via mailersend, use Mail/Mailersend.php class, it has send() function 
+    The send() function takes 4 arguments which are:
+        recipient Email
+        recipient name
+        Email subject
+        Email content
+        example
+            use NewdichMail\Mailersend;
+            $newMailsend = new Mailersend();
+            $newMailsend->send($recipient_email, $recipient_name, $subject, $content);
+        Note: Don't forget to set all your .env environment
+
 public
     The public folder is the directory for the FrontEnd
     It has an admin/ directory which is the FrontEnd for admins, this sends and receives requests and responses from the src/ directory

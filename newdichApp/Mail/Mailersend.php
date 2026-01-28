@@ -2,7 +2,7 @@
 namespace NewdichMail;
 use NewdichSchema\Settings;
 
-class MailerSend
+class Mailersend
 {
     private string $apiKey = Settings::MAILERSEND_API_KEY;
     private string $endpoint = Settings::MAILERSEND_MAILING_ENDPOINT;
