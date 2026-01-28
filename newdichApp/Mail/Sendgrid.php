@@ -31,16 +31,16 @@ class Sendgrid{
 
         $ch = curl_init($this->api);
         curl_setopt_array($ch, [
-            CURLOPT_POST=>true,
-            CURLOPT_HTTPHEADERS=>[
+            \CURLOPT_POST=>true,
+            \CURLOPT_HTTPHEADER=>[
                 "Authorization: Bearer $this->sendgridApiKey",
                 "Content-Type: application/json"
             ],
-            CURLOPT_RETURNTRANSFER=>true,
-            CURLOPT_POSTFIELDS=>json_encode($data)
+            \CURLOPT_RETURNTRANSFER=>true,
+            \CURLOPT_POSTFIELDS=>json_encode($data)
         ]);
         $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $httpCode = curl_getinfo($ch, \CURLINFO_HTTP_CODE);
         curl_close($ch);
 
         if($httpCode >= 200 && $httpCode < 300){
