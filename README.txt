@@ -70,6 +70,17 @@ Mail
             use NewdichMail\Sendgrid;
             $newSendgrid = new Sendgrid();
             $newSendgrid->send($recipient_email, $recipient_name, $subject, $content);
+    
+    To send email via mailgun, use Mail/Mailgun.php class, it has send() function 
+    The send() function takes 4 arguments which are:
+        recipient Email
+        recipient name
+        Email subject
+        Email content
+        example
+            use NewdichMail\Mailgun;
+            $newMailgun = new Mailgun();
+            $newMailgun->send($recipient_email, $recipient_name, $subject, $content);
 
 public
     The public folder is the directory for the FrontEnd
