@@ -16,8 +16,9 @@ class AppAuthorization{
 
     public function __construct($userToken){
         $this->userToken = $userToken;
+        $headers = new \stdClass();
         try{
-            $decodeToken = JWT::decode($this->userToken, new Key($this->jwtSecret, 'HS256'), ['exp' => false]);
+            $decodeToken = JWT::decode($this->userToken, new Key($this->jwtSecret, 'HS256'), $headers);
             $this->user_id = $decodeToken->user_id;
             $this->role = $decodeToken->role;
             //$this->expirationDate = $decodeToken->exp;

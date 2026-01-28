@@ -3,6 +3,8 @@ namespace NewdichAuth;
 use NewdichSchema\Settings;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Firebase\JWT\ExpiredException;
+use Exception;
 use PDO;
 use PDOException;
 
@@ -16,8 +18,9 @@ class SrcAuthorization{
 
     public function __construct($userToken){
         $this->userToken = $userToken;
+        $headers = new \stdClass();
         try{
-            $decodeToken = JWT::decode($this->userToken, new Key($this->jwtSecret, 'HS256'), ['exp' => false]);
+            $decodeToken = JWT::decode($this->userToken, new Key($this->jwtSecret, 'HS256'), $headers);
             $this->user_id = $decodeToken->user_id;
             $this->role = $decodeToken->role;
             //$this->expirationDate = $decodeToken->exp;
@@ -37,7 +40,7 @@ class SrcAuthorization{
         }
         else{
             //you can modify to add any role you want during authentication
-            return json_encode(array("status"=>"failed", "response"=>"access denied"), JSON_PRETTY_PRINT);
+            return json_encode(array("status"=>"failed", "response"=>"access denied and".$this->user_id), JSON_PRETTY_PRINT);
         }
     }
 
