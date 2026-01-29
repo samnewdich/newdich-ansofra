@@ -305,6 +305,49 @@ class Migration{
 
 
 
+    public function count(array $where = []): string
+    {
+        try {
+            $table = $this->table;
+
+            $sql   = "SELECT COUNT(`{$table}_id`) AS total FROM `$table`";
+            $binds = [];
+
+            if (!empty($where)) {
+                $conditions = [];
+                foreach ($where as $col => $val) {
+                    $conditions[]     = "`$col` = :$col";
+                    $binds[":$col"]   = $val;
+                }
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+
+            $stmt = $this->conn->prepare($sql);
+
+            foreach ($binds as $key => $value) {
+                $stmt->bindValue($key, $value);
+            }
+
+            $stmt->execute();
+
+            $total = (int) $stmt->fetchColumn();
+
+            return json_encode([
+                "status"   => "success",
+                "response" => $total
+            ], JSON_PRETTY_PRINT);
+
+        } catch (PDOException $e) {
+            return json_encode([
+                "status"   => "failed",
+                "response" => $e->getMessage()
+            ], JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
 
 
 

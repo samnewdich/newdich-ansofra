@@ -277,6 +277,21 @@ Schema
             bindParam(':email', 'useremail@gmail.com');
             bindParam(':password', '123456');
             //note: you must set both the data array and the conditions array
+        
+        To count table rowa, use the count() method in the Migration.php class.
+        It takes 1 argument, which are key=>value array of conditions to use in counting the row
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            $countDatakeyValue = [
+                "status"=>"active"
+            ];
+
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->count($countDatakeyValue);
+            
     RunMigration.php class :
         Once you configure your server in the Settings.php class
         And you have connected it to server in the Dealer.php class

@@ -24,8 +24,7 @@ class Index{
         return $hash;
     }
 
-    public function verifyHash($data){
-        $hash = $this->hashData($data);
+    public function verifyHash($data, $hash){
         return password_verify($data, $hash); //returns a boolean
         
     }
