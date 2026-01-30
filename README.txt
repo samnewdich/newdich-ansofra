@@ -175,6 +175,27 @@ Schema
             $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
             echo $newMigration->saveUnique($uniqueColName, $uniqueValue, $rowsInKeyValue);
         
+        To insert/create data into table uniquely with multiple unique and multiple value. That is if you want to insert into table but want to be sure no double entry. for example in the case of creating user accoun. you know one email should not be created more than once!
+        So to insert/create such data uniquely, use the saveUniqueMulti() method in the Migration.php class
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            $uniqueColArray = ["email","id","phone"];
+            $uniqueValueArray =["useremail@gmail.com", 10, 08010101010];
+            $rowsInKeyValue = [
+                "email"=>"useremail@gmail.com",
+                "fullname"=>"John Doe",
+                "country"=>"Nigeria"
+            ];
+            //Note: the keys of the array must exist as column in the table
+            //Note: The array of columns in the uniquecol must be in the table
+            //Note: The array of values in the uniquevalue must follow the way you put the array of values in the unique columns
+
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->saveUniqueMulti($uniqueColArray, $uniqueValueArray, $rowsInKeyValue);
+        
         To insert/create data into table without uniqueness. That is you don't mind even if there are duplicates. example is saving history or transaction records.
         To do this, use the save() method in the Migration.php class 
         example

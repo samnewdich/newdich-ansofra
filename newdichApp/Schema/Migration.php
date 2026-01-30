@@ -187,6 +187,109 @@ class Migration{
 
 
 
+    public function saveUniqueMulti(array $uniqueCol, array $uniqueValue, array $rowsInKeyValue)
+    {
+        try {
+            if (empty($rowsInKeyValue)) {
+                return json_encode([
+                    "status" => "failed",
+                    "response" => "No data supplied"
+                ], JSON_PRETTY_PRINT);
+            }
+
+            // Columns in table
+            $columns = $this->getTableColumns($this->conn, $this->table);
+
+            // Validate unique columns
+            foreach ($uniqueCol as $col) {
+                if (!in_array($col, $columns, true)) {
+                    return json_encode([
+                        "status" => "failed",
+                        "response" => "Invalid unique column: $col"
+                    ], JSON_PRETTY_PRINT);
+                }
+            }
+
+            // Validate unique values count
+            if (count($uniqueCol) !== count($uniqueValue)) {
+                return json_encode([
+                    "status" => "failed",
+                    "response" => "Unique columns and values count mismatch"
+                ], JSON_PRETTY_PRINT);
+            }
+
+            // Filter only allowed columns
+            $data = [];
+            foreach ($rowsInKeyValue as $col => $val) {
+                if (in_array($col, $columns, true)) {
+                    $data[$col] = $val;
+                }
+            }
+
+            if (empty($data)) {
+                return json_encode([
+                    "status" => "failed",
+                    "response" => "No valid columns supplied"
+                ], JSON_PRETTY_PRINT);
+            }
+
+            $table = $this->table;
+
+            // BUILD DUPLICATE CHECK
+            $where = [];
+            foreach ($uniqueCol as $col) {
+                $where[] = "`$col` = :$col";
+            }
+
+            $sqlCheck = "SELECT 1 FROM `$table` WHERE " . implode(' AND ', $where) . " LIMIT 1";
+            $check = $this->conn->prepare($sqlCheck);
+
+            foreach ($uniqueCol as $i => $col) {
+                $check->bindValue(":$col", $uniqueValue[$i]);
+            }
+
+            $check->execute();
+
+            if ($check->fetchColumn()) {
+                return json_encode([
+                    "status" => "failed",
+                    "response" => "duplicate entry"
+                ], JSON_PRETTY_PRINT);
+            }
+
+            // BUILD INSERT
+            $cols = array_keys($data);
+            $placeholders = array_map(fn($c) => ":$c", $cols);
+
+            $sqlInsert = "INSERT INTO `$table` (`" . implode('`,`', $cols) . "`)
+                        VALUES (" . implode(',', $placeholders) . ")";
+
+            $stmt = $this->conn->prepare($sqlInsert);
+
+            foreach ($data as $col => $val) {
+                $stmt->bindValue(":$col", $val);
+            }
+
+            $stmt->execute();
+
+            return json_encode([
+                "status" => "success",
+                "response" => "saved successfully",
+                "id" => $this->conn->lastInsertId()
+            ], JSON_PRETTY_PRINT);
+
+        } catch (PDOException $e) {
+            return json_encode([
+                "status" => "failed",
+                "response" => $e->getMessage()
+            ], JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
 
     public function save(array $rowsInKeyValue)
     {
