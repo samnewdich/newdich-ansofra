@@ -44,7 +44,14 @@ class Settings{
 
     //other configuration
     public const DOMAIN_NAME = DOMAIN_NAME;
+
+    //JWT Configuratiom
     public const AUTH_KEY = AUTH_KEY;
+    public const JWT_KEY = JWT_KEY;
+    public const JWT_EXPIRY = JWT_EXPIRY;
+    public const JWT_SECURE_LEVEL = JWT_SECURE_LEVEL;
+    public const JWT_SAMESITE = JWT_SAMESITE;
+    public const JWT_HASH_ALGORITHM = JWT_HASH_ALGORITHM;
 
     //for redis caching
     public const REDIS_SERVER_IP = REDIS_SERVER_IP;

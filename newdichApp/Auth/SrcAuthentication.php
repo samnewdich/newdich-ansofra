@@ -8,7 +8,13 @@ use PDOException;
 
  class SrcAuthentication{
     private $jwtSecret = Settings::AUTH_KEY;
+    private $jwtKey = Settings::JWT_KEY;
+    private $jwtExpiry = Settings::JWT_EXPIRY;
+    private $jwtSecureLevel = Settings::JWT_SECURE_LEVEL;
+    private $jwtSameSite = Settings::JWT_SAMESITE;
+    private $jwthash = Settings::JWT_HASH_ALGORITHM;
     private $domain = Settings::DOMAIN_NAME;
+    private $rootdir = Settings::ROOT_DIRECTORY;
 
     public function auth($email){
         if($email !==''){            
@@ -17,11 +23,19 @@ use PDOException;
                 'iss'=>$this->domain, //provided in the tables file
                 'aud'=>$this->domain,
                 'iat'=>time(),
-                //'exp'=>time() + (24 * 60 * 60),
+                'exp'=>time() + $this->jwtExpiry,
                 'user_id'=>trim($email),
                 'role'=>'admin'
             ];
-            $authhash = JWT::encode($authPayload, $this->jwtSecret, 'HS256');
+            $authhash = JWT::encode($authPayload, $this->jwtSecret, $this->jwthash);
+            //set it into cookie
+            setcookie($this->jwtKey, $authhash, [
+                "expires"=> time() + $this->jwtExpiry,
+                "path" => $this->rootdir,
+                "secure" => $this->jwtSecureLevel,
+                "httponly" => true,
+                "samesite" => $this->jwtSameSite
+            ]);
             return json_encode(array("status"=>"success", "response"=>$authhash), JSON_PRETTY_PRINT);
         }
         else{

@@ -7,18 +7,25 @@ use PDO;
 use PDOException;
 
 class AppAuthorization{
-    private $userToken;
+    //private $userToken;
     private $user_id;
     private $role;
     private $expirationDate;
     private $authResponse;
     private $jwtSecret = Settings::AUTH_KEY;
+    private $jwtKey = Settings::JWT_KEY;
+    private $jwthash = Settings::JWT_HASH_ALGORITHM;
 
-    public function __construct($userToken){
-        $this->userToken = $userToken;
+    public function __construct(){
+        //$this->userToken = $userToken;
         $headers = new \stdClass();
+        $authenticatedKey = $_COOKIE[$this->jwtKey] ?? null;
+        if(!$authenticatedKey){
+            $this->authResponse ="failed";
+        }
+            
         try{
-            $decodeToken = JWT::decode($this->userToken, new Key($this->jwtSecret, 'HS256'), $headers);
+            $decodeToken = JWT::decode($authenticatedKey, new Key($this->jwtSecret, $this->jwthash), $headers);
             $this->user_id = $decodeToken->user_id;
             $this->role = $decodeToken->role;
             //$this->expirationDate = $decodeToken->exp;
@@ -34,7 +41,7 @@ class AppAuthorization{
 
     public function authorize(){
         if($this->role ==='user'){
-            return json_encode(array("status"=>"success", "response"=>$this->authResponse), JSON_PRETTY_PRINT);
+            return json_encode(array("status"=>"success", "response"=>$this->user_id), JSON_PRETTY_PRINT);
         }
         else{
             //you can modify to add any role you want during authentication

@@ -244,6 +244,42 @@ Schema
             //note the arguments are all optional, so you can have something like:
             $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
             echo $newMigration->get();
+        
+        To select/fetch specific columns from table, use the getSpecific() method in Migration.php class
+        The 4 arguments which are all OPTIONAL
+        The first argument is the key=>value array of the condition to select
+        The second argument is the array of the columns to select
+        The third argument is the offset, at which row should the selection start from.
+        The fouth argument is the limit, the total number of rows to select/fetch
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            $offset = 0;
+            $limit = 50;
+            $ConditionsInKeyValue = [
+                "email"=>"useremail@gmail.com",
+                "password"=>"123456"
+            ];
+            //Note: the keys of the array must exist as column in the table
+
+            $columnsToSelect = [
+                "email",
+                "password",
+                "country",
+                "phone"
+                "fullname"
+            ];
+            //Note: the array must exist as column in the table
+
+            $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->getSpecific($ConditionsInKeyValue, $columnsToSelect, $offset, $limit);
+
+            So under the hood, what happens is:
+            SELECT email, password, country, phone, fullname FROM $adminTable Where email=:email AND password=:password
+            bindParam(':email', 'useremail@gmail.com');
+            bindParam(':password', '123456');
 
         To delete row from database table, use the remove() method in Migration.php class
         It takes one argument which is an array of condition to use in deleting the rows.

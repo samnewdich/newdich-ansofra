@@ -408,6 +408,93 @@ class Migration{
 
 
 
+
+    public function getSpecific(array $where = [], array $columnsToSelect = [], int $offset = 0, int $limit = 20)
+    {
+        try {
+            $table = $this->table;
+
+            // Get allowed columns from DB
+            $allowedColumns = $this->getTableColumns($this->conn, $table);
+
+            /* ---------------------------
+            * SELECT COLUMNS
+            * --------------------------- */
+            if (empty($columnsToSelect)) {
+                $select = "*";
+            } else {
+                // Filter only valid columns
+                $validColumns = array_intersect($columnsToSelect, $allowedColumns);
+
+                if (empty($validColumns)) {
+                    return json_encode([
+                        "status" => "failed",
+                        "response" => "Invalid columns selected"
+                    ], JSON_PRETTY_PRINT);
+                }
+
+                $select = "`" . implode("`,`", $validColumns) . "`";
+            }
+
+            $sql   = "SELECT $select FROM `$table`";
+            $binds = [];
+
+            /* ---------------------------
+            * WHERE CONDITIONS
+            * --------------------------- */
+            if (!empty($where)) {
+                $conditions = [];
+
+                foreach ($where as $col => $val) {
+                    if (!in_array($col, $allowedColumns, true)) {
+                        continue; // skip invalid column
+                    }
+
+                    $param = ":w_$col";
+                    $conditions[] = "`$col` = $param";
+                    $binds[$param] = $val;
+                }
+
+                if (!empty($conditions)) {
+                    $sql .= " WHERE " . implode(" AND ", $conditions);
+                }
+            }
+
+            /* ---------------------------
+            * PAGINATION
+            * --------------------------- */
+            $offset = max(0, (int) $offset);
+            $limit  = max(1, (int) $limit);
+
+            // Prefer explicit primary key if possible
+            $sql .= " ORDER BY `id` DESC LIMIT $offset, $limit";
+
+            $stmt = $this->conn->prepare($sql);
+
+            foreach ($binds as $key => $value) {
+                $stmt->bindValue($key, $value);
+            }
+
+            $stmt->execute();
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return json_encode([
+                "status" => "success",
+                "count" => count($rows),
+                "response" => $rows
+            ], JSON_PRETTY_PRINT);
+
+        } catch (PDOException $e) {
+            return json_encode([
+                "status" => "failed",
+                "response" => $e->getMessage()
+            ], JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
     public function count(array $where = []): string
     {
         try {
