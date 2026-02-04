@@ -1,19 +1,19 @@
 <?php
 namespace NewdichControllerApp;
-use NewdichDto\AnsofraAppDto;
+use NewdichDto\AnsofraDto;
 use NewdichMiddleware\Index;
-use NewdichAuth\AppAuthentication;
+use NewdichAuth\Authentication;
 use NewdichApp\Query\Login;
 
 $incoming = json_decode(file_get_contents("php://input"), true);
-$newdto = new AnsofraAppDto($incoming);
+$newdto = new AnsofraDto($incoming);
 $newMiddleware = new Index();
 $newLogin = new Login($newdto, $newMiddleware);
 $newLoginProcess = $newLogin->process();
 $newLoginRes = json_decode($newLoginProcess, true);
 if($newLoginRes["status"] ==="success"){
     //Now authenticate the user via JWT
-    $newAuth = new AppAuthentication();
+    $newAuth = new Authentication();
     $auth = $newAuth->auth($newMiddleware->cleanData($incoming["user_email"]));
     $authRes = json_decode($auth, true);
     if($authRes["status"] ==="success"){

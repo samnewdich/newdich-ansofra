@@ -1,6 +1,6 @@
 <?php
 namespace NewdichControllerApp;
-use NewdichDto\AnsofraAppDto; //you only need dto here if you send other data alongside the files, so dto will collect those other data
+use NewdichDto\AnsofraDto; //you only need dto here if you send other data alongside the files, so dto will collect those other data
 use NewdichFiles\Upload;
 header('Content-Type: application/json');
 

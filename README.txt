@@ -386,10 +386,9 @@ src
     The namespace is NewdichSrc
 
 Auth
-    The Auth/ directory contails the classes the Authenticates and Authorizes both Users and admins
-    It contains AppAuthentication and AppAuthorization for Authenticating and Authorizing Users
-    It contains SrcAuthentication and SrcAuthorization for Authenticating anf Authorizing admins
-    NOTE: Authentication(wether for App or Src) should be called once the user or admin has been Queried(that is logged in)
+    The Auth/ directory contains the classes that Authenticates and Authorizes All Roles(including Users and Admins)
+    It contains Authentication and Authorization for Authenticating and Authorizing All Roles(including Users and Admins)
+    NOTE: Authentication should be called once the user or admin has been Queried(that is logged in)
     NOTE: Authorization should be run on any request from user or admin to required endpoints.
 
 Controller
@@ -462,10 +461,8 @@ Cache
 Dto
     The Dto/ directory handles Data Transfer Object. It gets all the incoming data needed for computation
     Dto is passed through controller to the Classes where it's needed in the microservices in the command or queries
-    It has 3 classes which are AnsofraApiDto.php, AnsofraAppDto.php, AnsofraSrcDto.php
-    The AnsofraApiDto.php handles the incoming data needed in the /apis directory
-    The AnsofraAppDto.php handles the incoming data needed in the /app directory
-    The AnsofraSrcDto.php handles the incoming data needed in the /src directory
+    It has 1 class which is AnsofraDto.php
+    The AnsofraDto.php handles the incoming data needed
 
 Files 
     The Files/ directory handles file(s) processing, such as file(s) uploading, file(s) downloading and more.

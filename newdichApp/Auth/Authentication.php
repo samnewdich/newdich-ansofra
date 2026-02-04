@@ -16,22 +16,23 @@ use PDOException;
     private $domain = Settings::DOMAIN_NAME;
     private $rootdir = Settings::ROOT_DIRECTORY;
 
-    public function auth($email){
-        if($email !==''){            
+    public function auth($email, $role){
+        if($email !=='' && $role !==''){            
             //NOW authorize $jwtSecret 
             $authPayload = [
-                'iss'=>$this->domain, //provided in the tables file
+                'iss'=>$this->domain,
                 'aud'=>$this->domain,
                 'iat'=>time(),
                 'exp'=>time() + (int)$this->jwtExpiry,
                 'user_id'=>trim($email),
-                'role'=>'user'
+                'role'=>trim($role)
             ];
             $authhash = JWT::encode($authPayload, $this->jwtSecret, $this->jwthash);
             //set it into cookie
             setcookie($this->jwtKey, $authhash, [
                 "expires"=> time() + (int)$this->jwtExpiry,
                 "path" => $this->rootdir,
+                "domain" => $this->domain, //must be empty if domain is ip address
                 "secure" => $this->jwtSecureLevel,
                 "httponly" => true,
                 "samesite" => $this->jwtSameSite

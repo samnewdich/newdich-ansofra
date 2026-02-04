@@ -6,7 +6,7 @@ use Firebase\JWT\Key;
 use PDO;
 use PDOException;
 
-class SrcAuthorization{
+class AppAuthorization{
     //private $userToken;
     private $user_id;
     private $role;
@@ -18,6 +18,11 @@ class SrcAuthorization{
 
     public function __construct(){
         //$this->userToken = $userToken;
+        if (!isset($_COOKIE[$this->jwtKey])) {
+            http_response_code(401);
+            $this->authResponse ="failed";
+        }
+
         $headers = new \stdClass();
         $authenticatedKey = $_COOKIE[$this->jwtKey] ?? null;
         if(!$authenticatedKey){
@@ -40,13 +45,11 @@ class SrcAuthorization{
     }
 
     public function authorize(){
-        if($this->role ==='user'){
-            return json_encode(array("status"=>"success", "response"=>$this->user_id), JSON_PRETTY_PRINT);
-        }
-        else{
-            //you can modify to add any role you want during authentication
-            return json_encode(array("status"=>"failed", "response"=>"access denied"), JSON_PRETTY_PRINT);
-        }
+        $arraySend = [
+            "user_id"=>$this->user_id,
+            "role"=>$this->role
+        ];
+        return json_encode(array("status"=>"success", "response"=>$arraySend), JSON_PRETTY_PRINT);
     }
 
 }
