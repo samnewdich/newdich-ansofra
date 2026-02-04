@@ -23,14 +23,14 @@ use PDOException;
                 'iss'=>$this->domain, //provided in the tables file
                 'aud'=>$this->domain,
                 'iat'=>time(),
-                'exp'=>time() + $this->jwtExpiry,
+                'exp'=>time() + (int)$this->jwtExpiry,
                 'user_id'=>trim($email),
                 'role'=>'user'
             ];
             $authhash = JWT::encode($authPayload, $this->jwtSecret, $this->jwthash);
             //set it into cookie
             setcookie($this->jwtKey, $authhash, [
-                "expires"=> time() + $this->jwtExpiry,
+                "expires"=> time() + (int)$this->jwtExpiry,
                 "path" => $this->rootdir,
                 "secure" => $this->jwtSecureLevel,
                 "httponly" => true,

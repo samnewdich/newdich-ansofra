@@ -1,17 +1,32 @@
 <?php
 namespace NewdichControllerApp;
-use NewdichAuth\AppAuthentication;
 use NewdichDto\AnsofraAppDto;
 use NewdichMiddleware\Index;
+use NewdichAuth\AppAuthentication;
+use NewdichApp\Query\Login;
 
+$incoming = json_decode(file_get_contents("php://input"), true);
+$newdto = new AnsofraAppDto($incoming);
 $newMiddleware = new Index();
-
-$incomingRequest = json_decode(file_get_contents("php://input"), true);
-$email = $incomingRequest["email"];
-$cleanEmail = $newMiddleware->cleanData($email);
-
-$newAuth = new AppAuthentication();
-$auth = $newAuth->auth($cleanEmail);
-echo $auth; //returns an encoded array of ["status"=>"failed or success", "response"=>"hashed token or error response"]
-exit;
+$newLogin = new Login($newdto, $newMiddleware);
+$newLoginProcess = $newLogin->process();
+$newLoginRes = json_decode($newLoginProcess, true);
+if($newLoginRes["status"] ==="success"){
+    //Now authenticate the user via JWT
+    $newAuth = new AppAuthentication();
+    $auth = $newAuth->auth($newMiddleware->cleanData($incoming["user_email"]));
+    $authRes = json_decode($auth, true);
+    if($authRes["status"] ==="success"){
+        echo json_encode(["status"=>"success", "response"=>$newLoginRes["response"]], JSON_PRETTY_PRINT);
+        exit;
+    }
+    else{
+        echo $auth;
+        exit;
+    }
+}
+else{
+    echo $newLoginProcess;
+    exit;
+}
 ?>
