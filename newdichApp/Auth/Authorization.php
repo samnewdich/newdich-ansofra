@@ -6,7 +6,7 @@ use Firebase\JWT\Key;
 use PDO;
 use PDOException;
 
-class AppAuthorization{
+class Authorization{
     //private $userToken;
     private $user_id;
     private $role;
