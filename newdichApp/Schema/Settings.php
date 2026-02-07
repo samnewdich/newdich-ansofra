@@ -61,6 +61,14 @@ class Settings{
     //for file and uploading
     public const UPLOAD_DIRECTIORY = UPLOAD_DIRECTIORY;
 
+    //for paystack
+    public const PAYSTACK_SECRET_KEY = PAYSTACK_SECRET_KEY;
+    public const PAYSTACK_VERIFICATION_LINK = PAYSTACK_VERIFICATION_LINK;
+
+    //for exchangerateapi
+    public const EXCHANGERATE_APIKEY = EXCHANGERATE_APIKEY;
+    public const EXCHANGERATE_LINK = EXCHANGERATE_LINK;
+
     //You can then put your table here
     //Examples
     public const USERS_TABLE ="users";
