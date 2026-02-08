@@ -7,6 +7,7 @@ define('ROOT_DIRECTORY', $_ENV['ROOT_DIRECTORY']);
 define('APP_ENV', $_ENV['APP_ENV']);
 define('APP_VERSION', $_ENV['APP_VERSION']);
 define('APP_NAME', $_ENV['APP_NAME']);
+define('APP_URL', $_ENV['APP_URL']);
 define('APP_TITLE', $_ENV['APP_TITLE']);
 define('APP_DESCRIPTION', $_ENV['APP_DESCRIPTION']);
 define('APP_SMTP', $_ENV['APP_SMTP']);

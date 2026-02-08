@@ -5,6 +5,7 @@ class Settings{
     public const ROOT_DIRECTORY = ROOT_DIRECTORY;
     public const APP_VERSION = APP_VERSION;
     public const APP_NAME = APP_NAME;
+    public const APP_URL = APP_URL;
     public const APP_TITLE = APP_TITLE;
     public const APP_DESCRIPTION = APP_DESCRIPTION;
     public const APP_SMTP = APP_SMTP;
