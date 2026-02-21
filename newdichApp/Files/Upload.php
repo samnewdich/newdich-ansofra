@@ -5,7 +5,7 @@ use NewdichSchema\Settings;
 class Upload{
     private $filesUploading;
     private $uploadDir = Settings::UPLOAD_DIRECTORY; //folder where the files will be uploaded to
-    
+    private $rootDir = Settings::ROOT_DIRECTORY;
     //NOTE: THE REQUEST COMING MUST NOT COME VIA DTO, IT MUST COME AS NORMAL REQUEST DIRECTLY TO THE CONTROLLER
     //THEN FROM THE CONTROLLER, THE REQUEST COMES HERE.
     //CHECK THE DIRECTORY Controller/App/UploadExampleController.php TO SEE EXAMPLE OF HOW THE CONTROLLER FOR UPLOADING FILES SHOULD BE
@@ -16,7 +16,7 @@ class Upload{
 
     public function process(){
         // Configuration
-        $uploadDir = $this->uploadDir;
+        $uploadDir = $_SERVER["DOCUMENT_ROOT"] . $this->rootDir . $this->uploadDir;
         $maxFiles  = 20;
         $allowedTypes = [
             //Images
