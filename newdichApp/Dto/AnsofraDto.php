@@ -2,7 +2,7 @@
 namespace NewdichDto;
 use NewdichMiddleware\Index;
 
-class AnsofraAppDto{
+class AnsofraDto{
     public $email;
     public $password;
     public $fullname;
