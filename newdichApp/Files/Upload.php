@@ -4,7 +4,7 @@ use NewdichSchema\Settings;
 
 class Upload{
     private $filesUploading;
-    private $uploadDir = Settings::UPLOAD_DIRECTIORY; //folder where the files will be uploaded to
+    private $uploadDir = Settings::UPLOAD_DIRECTORY; //folder where the files will be uploaded to
     
     //NOTE: THE REQUEST COMING MUST NOT COME VIA DTO, IT MUST COME AS NORMAL REQUEST DIRECTLY TO THE CONTROLLER
     //THEN FROM THE CONTROLLER, THE REQUEST COMES HERE.

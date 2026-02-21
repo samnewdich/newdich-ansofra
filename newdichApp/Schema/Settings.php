@@ -60,7 +60,7 @@ class Settings{
     public const REDIS_AUTH_PASSWORD = REDIS_AUTH_PASSWORD;
 
     //for file and uploading
-    public const UPLOAD_DIRECTIORY = UPLOAD_DIRECTIORY;
+    public const UPLOAD_DIRECTORY = UPLOAD_DIRECTORY;
 
     //for paystack
     public const PAYSTACK_SECRET_KEY = PAYSTACK_SECRET_KEY;
