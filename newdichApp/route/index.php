@@ -27,8 +27,10 @@ $usersArea = Settings::ROOT_DIRECTORY ."/api"; //the area that users can access
 $adminArea = Settings::ROOT_DIRECTORY ."/apiadmin"; //the area that only admin can access
 // let's say your root directory is /, your adminArea will be /apiadmin
 // if your root directory is /ecommerce, your adminArea will be /ecommerce/apiadmin
-$appController = $serverDir.$rootDir."/Controller/App";
-$srcController = $serverDir.$rootDir."/Controller/Src";
+//$appController = $serverDir.$rootDir."/Controller/App";
+//$srcController = $serverDir.$rootDir."/Controller/Src";
+$appController = "/../Controller/App";
+$srcController = "/../Controller/Src";
 if($url === $rootDir || $url === $rootDir . "/" || $url === $rootDir . "/index.html" || $url === $rootDir . "/index.php"){
     require_once $appController."/Index.php";
     exit();
