@@ -44,7 +44,7 @@ class Migration{
         //and if it is only one project you have, and the one project is inside (/var/www/html)
         // then the root directory will be /
 
-        require $_SERVER["DOCUMENT_ROOT"] . $rootDir."/Schema/Dealer.php";
+        require_once __DIR__ . "/Dealer.php";
         $this->conn = $connnewdich;
         $this->conndb = $connnewdichdb;
     }
