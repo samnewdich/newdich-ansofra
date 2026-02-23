@@ -1,6 +1,6 @@
 ./vendor/bin/openapi \
   --bootstrap vendor/autoload.php \
-  --output src/docs/newdichsrc.json \
+  --output ansofra/public/swagger/src/docs/newdichsrc.json \
   --exclude vendor \
   --exclude apis \
   --exclude phpmyadmin \
@@ -19,12 +19,13 @@
   --exclude .htaccess.php \
   --exclude README.txt \
   --exclude nodejs \
+  --exclude ansofra \
   src/
 
 
 ./vendor/bin/openapi \
   --bootstrap vendor/autoload.php \
-  --output app/docs/newdichsrc.json \
+  --output ansofra/public/swagger/docs/newdichapp.json \
   --exclude vendor \
   --exclude apis \
   --exclude phpmyadmin \
@@ -43,4 +44,5 @@
   --exclude .htaccess.php \
   --exclude README.txt \
   --exclude nodejs \
+  --exclude ansofra \
   app/
