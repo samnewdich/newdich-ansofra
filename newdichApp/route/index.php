@@ -32,16 +32,22 @@ $adminArea = Settings::ROOT_DIRECTORY ."/apiadmin"; //the area that only admin c
 $appController = "/../Controller/App";
 $srcController = "/../Controller/Src";
 if($url === $rootDir || $url === $rootDir . "/" || $url === $rootDir . "/index.html" || $url === $rootDir . "/index.php"){
-    require_once $appController."/Index.php";
+    require_once __DIR__ . $appController."/Index.php";
     exit();
 }
 elseif($url === $usersArea || $url === $usersArea . "/"){
-    require_once $appController."/AppLanding.php";
+    require_once __DIR__ . $appController."/AppLanding.php";
     exit();
 }
 elseif($url === $adminArea."/run_migration"){
     //Running the migration will create the admin database with details
-    require_once $srcController."/RunMigration.php";
+    require_once __DIR__ . $srcController."/RunMigration.php";
+    exit();
+}
+
+
+else{
+    require_once __DIR__ . $serverDir."/public/error/404.html";
     exit();
 }
 ?>
