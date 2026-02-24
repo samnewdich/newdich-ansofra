@@ -575,3 +575,8 @@ USING AND PASSING JWT ENCODED HASH FROM FRONTEND TO BACKEND.
             'Content-Type':'application/json'
         }
     })
+
+
+#NOTE: IN PRODUCTION ONLY GRANT PUBLIC ACCESS TO THE FOLDER/DIRECTORY NAMED ansofra
+#MEANING THAT ON YOUR HOSTING SERVER, /ansofra will be the document root.
+#NOTE: ENTERING POINT TO THE ANSOFRA IS /ansofra/index.php
