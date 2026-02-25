@@ -3,6 +3,7 @@ namespace NewdichRoute;
 use NewdichSchema\Settings;
 
 $serverDir = $_SERVER["DOCUMENT_ROOT"]; //server directory
+$docRoot = Settings::DOC_ROOT;
 //let apis request go to apis controller
 //let app request go to app controller
 //let src request go to src controler
@@ -31,8 +32,8 @@ $adminArea = Settings::ROOT_DIRECTORY ."/apiadmin"; //the area that only admin c
 //$srcController = $serverDir.$rootDir."/Controller/Src";
 $appController = "/../Controller/App";
 $srcController = "/../Controller/Src";
-if($url === $rootDir || $url === $rootDir . "/" || $url === $rootDir . "/index.html" || $url === $rootDir . "/index.php"){
-    require_once __DIR__ . $appController."/Index.php";
+if($url === $rootDir || $url === $rootDir . "/" || $url === $rootDir . "/index.html" || $url === $rootDir . "/index.php" || $url === $docRoot . $rootDir || $url === $docRoot . $rootDir . "/"){
+    require_once __DIR__ . "/../ansofra/public/index.html";
     exit();
 }
 elseif($url === $usersArea || $url === $usersArea . "/"){
@@ -46,7 +47,7 @@ elseif($url === $adminArea."/run_migration"){
 
 
 else{
-    require_once __DIR__ . $serverDir."/public/error/404.html";
+    require_once __DIR__ . "/.."."$rootDir/public/error/404.html";
     exit();
 }
 ?>

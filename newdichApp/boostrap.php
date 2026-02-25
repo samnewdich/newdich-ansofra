@@ -3,6 +3,7 @@ use Dotenv\Dotenv;
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
+define('DOC_ROOT', $_ENV['DOC_ROOT']);
 define('ROOT_DIRECTORY', $_ENV['ROOT_DIRECTORY']);
 define('APP_ENV', $_ENV['APP_ENV']);
 define('APP_VERSION', $_ENV['APP_VERSION']);

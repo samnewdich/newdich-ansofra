@@ -2,6 +2,7 @@
 namespace NewdichSchema;
 
 class Settings{
+    public const DOC_ROOT = DOC_ROOT;
     public const ROOT_DIRECTORY = ROOT_DIRECTORY;
     public const APP_VERSION = APP_VERSION;
     public const APP_NAME = APP_NAME;
