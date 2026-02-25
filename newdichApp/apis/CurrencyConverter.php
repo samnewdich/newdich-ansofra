@@ -9,15 +9,14 @@ class CurrencyConverter{
     private $middleware;
     private $ExchangeRateApiKey = Settings::EXCHANGERATE_APIKEY;
     private $ExchangeRateApiLink = Settings::EXCHANGERATE_LINK;
-    public function __construct(AnsofraDto $dto, Index $middleware){
+    public function __construct(AnsofraDto $dto){
         $this->dto = $dto;
-        $this->middleware = $middleware;
     }
 
     public function process(){
         //This api uses https://www.exchangerate-api.com/ for currency conversion
         $yourExchangeRateApiKey = $this->ExchangeRateApiKey; //This is the api key you get from https://www.exchangerate-api.com/
-        $currencyPair = $this->middleware->cleanData($this->dto->currency_pair); //currency pair ti convert, must be like this USD_NGN
+        $currencyPair = $this->dto->currency_pair; //currency pair ti convert, must be like this USD_NGN
         $currencyPair = strtoupper(str_replace($currencyPair, "_", "/"));
         $url = $this->ExchangeRateApiLink."$yourExchangeRateApiKey/pair/$currencyPair";
         $ch = curl_init();
