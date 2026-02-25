@@ -69,5 +69,18 @@ class Index{
             return json_encode(array("status"=>"failed", "response"=>$e->getMessage()), JSON_PRETTY_PRINT);
         }
     }
+
+
+
+    public function setExpire($key, $window){
+        try{
+            $window = (int) $window;
+            $this->conRedis()->expire($key, $window);
+            return json_encode(array("status"=>"success", "response"=>"successfully expired"), JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e){
+            return json_encode(array("status"=>"failed", "response"=>$e->getMessage()), JSON_PRETTY_PRINT);
+        }
+    }
 }
 ?>

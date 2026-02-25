@@ -6,6 +6,7 @@ class Upload{
     private $filesUploading;
     private $uploadDir = Settings::UPLOAD_DIRECTORY; //folder where the files will be uploaded to
     private $rootDir = Settings::ROOT_DIRECTORY;
+    private $maxFileSize = Settings::MAX_UPLOAD_SIZE;
     //NOTE: THE REQUEST COMING MUST NOT COME VIA DTO, IT MUST COME AS NORMAL REQUEST DIRECTLY TO THE CONTROLLER
     //THEN FROM THE CONTROLLER, THE REQUEST COMES HERE.
     //CHECK THE DIRECTORY Controller/App/UploadExampleController.php TO SEE EXAMPLE OF HOW THE CONTROLLER FOR UPLOADING FILES SHOULD BE
@@ -18,6 +19,7 @@ class Upload{
         // Configuration
         $uploadDir = $_SERVER["DOCUMENT_ROOT"] . $this->rootDir . $this->uploadDir;
         $maxFiles  = 20;
+        $maxFileSize = $this->maxFileSize * 1024 * 1024;
         $allowedTypes = [
             //Images
             'image/jpeg',
@@ -113,6 +115,12 @@ class Upload{
 
             if ($files['error'][$i] !== UPLOAD_ERR_OK) {
                 $errors[] = "Error uploading file: " . $files['name'][$i];
+                continue;
+            }
+
+            //FILE SIZE VALIDATION (ADD THIS)
+            if ($files['size'][$i] > $maxFileSize) {
+                $errors[] = "File too large: {$files['name'][$i]} (Max: 10MB)";
                 continue;
             }
 

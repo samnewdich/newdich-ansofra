@@ -40,7 +40,6 @@ elseif($url === $usersArea || $url === $usersArea . "/"){
     exit();
 }
 elseif($url === $adminArea."/run_migration"){
-    //Running the migration will create the admin database with details
     require_once __DIR__ . $srcController."/RunMigration.php";
     exit();
 }

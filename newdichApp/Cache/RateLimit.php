@@ -20,7 +20,7 @@ class RateLimit{
         $count = $newIndex->setIncrease($key);
 
         if ($count == 1) {
-            $newIndex->expire($key, $this->window);
+            $newIndex->setExpire($key, $this->window);
         }
 
         if ($count > $this->limit) {

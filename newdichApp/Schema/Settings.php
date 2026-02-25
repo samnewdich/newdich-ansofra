@@ -61,6 +61,7 @@ class Settings{
 
     //for file and uploading
     public const UPLOAD_DIRECTORY = UPLOAD_DIRECTORY;
+    public const MAX_UPLOAD_SIZE = MAX_UPLOAD_SIZE;
 
     //for paystack
     public const PAYSTACK_SECRET_KEY = PAYSTACK_SECRET_KEY;
@@ -69,10 +70,5 @@ class Settings{
     //for exchangerateapi
     public const EXCHANGERATE_APIKEY = EXCHANGERATE_APIKEY;
     public const EXCHANGERATE_LINK = EXCHANGERATE_LINK;
-
-    //You can then put your table here
-    //Examples
-    public const USERS_TABLE ="users";
-    public const ADMIN_TABLE ="admins";
 }
 ?>

@@ -9,8 +9,6 @@ use NewdichSchema\Platform;
 use PDO;
 use PDOException;
 
-//NOTE: WHEN PUSHING TO PRODUCTION, COMMENT OUT OR DELETE THE createDB() and createTB() methods
-
 class Migration{
     private $table;
     private $columns = [];
@@ -30,19 +28,7 @@ class Migration{
             $this->columns = $columns;
         }
         
-        $rootDir = Settings::ROOT_DIRECTORY; //the root directory of the project
-        //$rootDir can be / and it can be something like /vtu
-        //for example, let's say you have one server/host and you have many project in it.
-        //Example, in your localhost(/var/www/html), let's say you have 3 different projects:
-        //ecommerce, vtu, fintech.
-        //inside your localhost(/var/www/html), you will have
-        // var/www/html/ecommerce
-        // var/www/html/vtu
-        // var/www/html/fintech
-        //so, for ecommerce, the root directory is /ecommerce
-        //for vtu, the root directory is /vtu and for fintech the root directory is /fintech
-        //and if it is only one project you have, and the one project is inside (/var/www/html)
-        // then the root directory will be /
+        $rootDir = Settings::ROOT_DIRECTORY; 
 
         require_once __DIR__ . "/Dealer.php";
         $this->conn = $connnewdich;
@@ -79,9 +65,6 @@ class Migration{
                 $columnsSQL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         ";
-
-        // DEBUG (use once)
-        // echo "<pre>$sql</pre>"; exit;
 
         $this->conn->exec($sql);
         echo "Table " .$this->table. " was created successfully";
