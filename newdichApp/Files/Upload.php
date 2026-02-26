@@ -17,7 +17,7 @@ class Upload{
 
     public function process(){
         // Configuration
-        $uploadDir = __DIR__ ."/.." . $this->rootDir . $this->uploadDir;
+        $uploadDir = __DIR__ ."/../ansofra" . $this->uploadDir;
         $maxFiles  = 20;
         $maxFileSize = $this->maxFileSize * 1024 * 1024;
         $allowedTypes = [
