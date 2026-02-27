@@ -30,7 +30,7 @@ class Migration{
         
         $rootDir = Settings::ROOT_DIRECTORY; 
 
-        require_once __DIR__ . "/Dealer.php";
+        require __DIR__ . "/Dealer.php";
         $this->conn = $connnewdich;
         $this->conndb = $connnewdichdb;
     }
@@ -45,7 +45,7 @@ class Migration{
 
         $this->conndb->exec($sql);
         echo "Database $dbname successfully created";
-        exit;
+        //exit;
     }
 
 
@@ -68,7 +68,7 @@ class Migration{
 
         $this->conn->exec($sql);
         echo "Table " .$this->table. " was created successfully";
-        exit;
+        //exit;
     }
 
 

@@ -21,11 +21,11 @@ $rootDir = Settings::ROOT_DIRECTORY; //the root directory of the project
 //for vtu, the root directory is /vtu and for fintech the root directory is /fintech
 //and if it is only one project you have, and the one project is inside (/var/www/html)
 // then the root directory will be /
-$usersArea = $docRoot . $rootDir . Settings::ROOT_DIRECTORY ."/api"; //the area that users can access
+$usersArea = $docRoot . $rootDir ."/api"; //the area that users can access
 // let's say your root directory is / . Then the usersArea will be /api
 // if your root directory is /ecommerce, your usersArea will be /ecommerce/api
 // if your root directory is /vtu, your usersArea will be /vtu/api
-$adminArea = $docRoot . $rootDir . Settings::ROOT_DIRECTORY ."/apiadmin"; //the area that only admin can access
+$adminArea = $docRoot . $rootDir ."/apiadmin"; //the area that only admin can access
 // let's say your root directory is /, your adminArea will be /apiadmin
 // if your root directory is /ecommerce, your adminArea will be /ecommerce/apiadmin
 //$appController = $serverDir.$rootDir."/Controller/App";
