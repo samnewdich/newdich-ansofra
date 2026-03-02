@@ -39,5 +39,55 @@ class Index{
         $otp = substr($otp, 0, 6);
         return $otp;
     }
+
+
+    public function apiHeaders()
+    {
+        if (function_exists('getallheaders')) {
+            $headers = array_change_key_case(getallheaders(), CASE_LOWER);
+        } else {
+            $headers = [];
+            foreach ($_SERVER as $key => $value) {
+                if (strpos($key, 'HTTP_') === 0) {
+                    $headers[strtolower(str_replace('_', '-', substr($key, 5)))] = $value;
+                } elseif (in_array($key, ['CONTENT_TYPE', 'CONTENT_LENGTH'])) {
+                    $headers[strtolower(str_replace('_', '-', $key))] = $value;
+                }
+            }
+        }
+
+        $host = $headers['host'] ?? '';
+        $contentType = $headers['content-type'] ?? '';
+        //$authorization = $headers['authorization'] ?? ($headers['x-api-key'] ?? '');
+        $authorization = $headers['authorization'] ?? $headers['x-api-key'] ?? $headers['api-key'] ?? '';
+
+        $label = '';
+        $apiKey = '';
+        if (!empty($authorization)) {
+            if (preg_match('/^(Bearer|ApiKey|Token|SecretKey)\s+(\S+)$/i', $authorization, $matches)) {
+                $label = $matches[1];
+                $apiKey = $matches[2];
+            } else {
+                $apiKey = $authorization;
+            }
+        }
+
+        if ($host && $contentType && $apiKey) {
+            return json_encode([
+                "status" => "success",
+                "response" => [
+                    "host" => $host,
+                    "contentType" => $contentType,
+                    "apiKey" => $apiKey,
+                    "label" => $label
+                ]
+            ], JSON_PRETTY_PRINT);
+        }
+
+        return json_encode([
+            "status" => "failed",
+            "response" => "Could not retrieve headers info"
+        ], JSON_PRETTY_PRINT);
+    }
 }
 ?>
