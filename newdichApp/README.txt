@@ -214,6 +214,34 @@ Schema
 
             $newMigration = new Migration(null, $adminTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
             echo $newMigration->save($rowsInKeyValue);
+        
+        To sum the total rows in specific columns, use the sum() method. It takes to arguments that must be array. The first argument is the array of columns whose rows are to be summed up, the second argument is the array of conditions
+        To do this, use the sum() method in the Migration.php class 
+        example
+            use NewdichSchema\Migration;
+            use NewdichSchema\Platform;
+            use NewdichSchema\Settings;
+            $usersTable = Platform::USERS;
+            $columns = ["amount", "price"];
+            $condition = [
+                "email"=>"useremail@gmail.com",
+                "fullname"=>"John Doe",
+                "country"=>"Nigeria"
+            ];
+            //Note: the keys of the array must exist as column in the table
+
+            $newMigration = new Migration(null, $userTable); //No table columns needed so just put null, only the table name is needed as contructor. check the Platform.php file to see how the table columns must be
+            echo $newMigration->sum($columns, $condition);
+            //It will return status and response. The response would be the array of the columns passed with the summation.
+            E.g of the output
+            {
+                "status":"success",
+                "response":{
+                    "amount":2000,
+                    "price":5000
+                }
+            }
+            //Note: The columns you want to sum should be of datatype number. e,g integer, floats, double, etc.
 
         To select/fetch from table, use the get() method in Migration.php class
         The 3 arguments which are all OPTIONAL

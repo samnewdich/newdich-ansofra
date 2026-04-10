@@ -517,6 +517,91 @@ class Migration{
             ], JSON_PRETTY_PRINT);
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    public function sum(array $columnsToSum, array $where = []): string 
+    {
+        try {
+            $table = $this->table;
+
+            if (empty($columnsToSum)) {
+                throw new Exception("No columns provided for SUM");
+            }
+
+            $selectParts = [];
+
+            // Validate and build SUM columns
+            foreach ($columnsToSum as $col) {
+                if (!preg_match('/^[a-zA-Z0-9_]+$/', $col)) {
+                    throw new Exception("Invalid column name: $col");
+                }
+
+                //$selectParts[] = "SUM(`$col`) AS `$col`";
+                $selectParts[] = "SUM(CAST(`$col` AS DECIMAL(15,2))) AS `$col`";
+            }
+
+            $sql = "SELECT " . implode(", ", $selectParts) . " FROM `$table`";
+
+            $binds = [];
+            $conditions = [];
+
+            // WHERE conditions
+            if (!empty($where)) {
+                foreach ($where as $key => $value) {
+
+                    if (!preg_match('/^[a-zA-Z0-9_]+$/', $key)) {
+                        throw new Exception("Invalid column in WHERE: $key");
+                    }
+
+                    if (is_array($value)) {
+                        $operator = $value[0];
+                        $val = $value[1];
+                    } else {
+                        $operator = "=";
+                        $val = $value;
+                    }
+
+                    $param = ":{$key}_" . count($binds);
+
+                    $conditions[] = "`$key` $operator $param";
+                    $binds[$param] = $val;
+                }
+
+                $sql .= " WHERE " . implode(" AND ", $conditions);
+            }
+
+            $stmt = $this->conn->prepare($sql);
+
+            foreach ($binds as $param => $value) {
+                $stmt->bindValue($param, $value);
+            }
+
+            $stmt->execute();
+
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Convert nulls to 0
+            foreach ($result as $key => $value) {
+                $result[$key] = (float) ($value ?? 0);
+            }
+
+            return json_encode([
+                "status"   => "success",
+                "response" => $result
+            ], JSON_PRETTY_PRINT);
+
+        } catch (Throwable $e) {
+            return json_encode([
+                "status"   => "failed",
+                "response" => $e->getMessage()
+            ], JSON_PRETTY_PRINT);
+        }
+    }
 
 
 
